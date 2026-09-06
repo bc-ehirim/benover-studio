@@ -3,8 +3,8 @@ import type { GeneratedContent } from "@/types";
 /** Full plain-text rendering of a generated result. */
 export function resultToText(result: GeneratedContent): string {
   return [
-    "BENOVER CONTENT STUDIO",
-    "======================",
+    "BENOVER TECH GADGET CONTENT",
+    "===========================",
     "",
     `Platform:     ${result.platform}`,
     `Content type: ${result.contentType}`,

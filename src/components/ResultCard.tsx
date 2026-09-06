@@ -46,7 +46,7 @@ export function ResultCard({ result }: ResultCardProps) {
 
         <div className="px-5 py-5">
           <div className="flex items-center justify-between">
-            <h4 className="text-sm font-semibold">Caption</h4>
+            <h4 className="text-sm font-semibold">Benover Tech caption</h4>
             <span
               className={
                 charCount > max

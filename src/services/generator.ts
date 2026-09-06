@@ -316,7 +316,7 @@ function buildVideoPrompt(
     ``,
     `SCENE 1 (0–5s): Extreme close-up of ${profile.imageSubject} on a reflective black surface. Camera: slow dolly-in with a slight parallax drift. Text overlay: "${hook.slice(0, 60)}"`,
     ``,
-    `SCENE 2 (5–13s): Hands inspecting the subject in warm studio light; cutaways to ${profile.detail}. Camera: handheld orbit at 30 degrees, then a smooth rack focus. Text overlay: "We check what others hide."`,
+    `SCENE 2 (5–13s): Hands inspecting the subject in clean studio light; cutaways to ${profile.detail}. Camera: handheld orbit at 30 degrees, then a smooth rack focus. Text overlay: "Compare the details that matter."`,
     ``,
     `SCENE 3 (13–20s): The customer smiling as they receive the finished item; shop interior slightly out of focus behind. Camera: gentle push-in, ending on a static hero frame. Text overlay: "${profile.proof}."`,
     ``,
