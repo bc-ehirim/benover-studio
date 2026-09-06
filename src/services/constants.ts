@@ -28,16 +28,12 @@ export const PLATFORMS: Platform[] = [
 ];
 
 export const CONTENT_TYPES: ContentTypeOption[] = [
-  { id: "educational", name: "Educational", blurb: "Teach one useful thing" },
-  { id: "promotional", name: "Promotional", blurb: "Push an offer clearly" },
-  { id: "storytelling", name: "Storytelling", blurb: "A real customer moment" },
-  { id: "sales", name: "Sales", blurb: "Direct, conversion-focused" },
-  { id: "behind-the-scenes", name: "Behind the Scenes", blurb: "Show the process" },
+  { id: "educational", name: "Buyer Education", blurb: "Teach one useful thing" },
+  { id: "promotional", name: "Offer", blurb: "Present a product offer" },
+  { id: "comparison", name: "Comparison", blurb: "Help buyers compare" },
   { id: "tips", name: "Tips", blurb: "Fast, saveable advice" },
-  { id: "motivation", name: "Motivation", blurb: "Fuel for the grind" },
   { id: "product-showcase", name: "Product Showcase", blurb: "Hero the product" },
-  { id: "customer-testimonial", name: "Customer Testimonial", blurb: "Proof that sells" },
-  { id: "trending-style", name: "Trending Style", blurb: "Ride the current format" },
+  { id: "customer-proof", name: "Customer Proof", blurb: "Show why buyers trust it" },
 ];
 
 export const TONES: ToneOption[] = [
@@ -97,15 +93,15 @@ export const WEEK_CALENDAR: CalendarDay[] = [
     index: 2,
     short: "Tue",
     label: "Tuesday",
-    contentType: "product-showcase",
-    typeLabel: "Product Showcase",
+    contentType: "comparison",
+    typeLabel: "Comparison",
   },
   {
     index: 3,
     short: "Wed",
     label: "Wednesday",
-    contentType: "storytelling",
-    typeLabel: "Storytelling",
+    contentType: "customer-proof",
+    typeLabel: "Customer Proof",
   },
   {
     index: 4,
@@ -114,20 +110,20 @@ export const WEEK_CALENDAR: CalendarDay[] = [
     contentType: "educational",
     typeLabel: "Educational",
   },
-  { index: 5, short: "Fri", label: "Friday", contentType: "sales", typeLabel: "Sales" },
+  { index: 5, short: "Fri", label: "Friday", contentType: "promotional", typeLabel: "Offer" },
   {
     index: 6,
     short: "Sat",
     label: "Saturday",
-    contentType: "behind-the-scenes",
-    typeLabel: "Behind the Scenes",
+    contentType: "product-showcase",
+    typeLabel: "Product Showcase",
   },
   {
     index: 0,
     short: "Sun",
     label: "Sunday",
-    contentType: "customer-testimonial",
-    typeLabel: "Community",
+    contentType: "tips",
+    typeLabel: "Tips",
   },
 ];
 
@@ -143,4 +139,5 @@ export const INPUT_LIMITS = {
   audience: 120,
   cta: 160,
   customNiche: 60,
+  productField: 80,
 } as const;

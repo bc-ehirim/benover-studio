@@ -3,14 +3,10 @@ export type PlatformId = "facebook" | "instagram" | "tiktok";
 export type ContentTypeId =
   | "educational"
   | "promotional"
-  | "storytelling"
-  | "sales"
-  | "behind-the-scenes"
+  | "comparison"
   | "tips"
-  | "motivation"
   | "product-showcase"
-  | "customer-testimonial"
-  | "trending-style";
+  | "customer-proof";
 
 export type ToneId =
   | "professional"
@@ -54,6 +50,14 @@ export interface GenerationInput {
   business?: string;
   audience?: string;
   cta?: string;
+  model?: string;
+  storage?: string;
+  ram?: string;
+  condition?: string;
+  batteryHealth?: string;
+  color?: string;
+  price?: string;
+  availability?: string;
 }
 
 export interface GeneratedContent {

@@ -124,27 +124,19 @@ export function profileFor(niche: string): NicheProfile {
 export const TITLE_TEMPLATES: Record<ContentTypeId, (p: NicheProfile) => string> = {
   educational: (p) => `What To Check Before Choosing ${p.key}`,
   promotional: (p) => `${p.key} For Your Next Upgrade`,
-  storytelling: () => "The Upgrade That Finally Made Sense",
-  sales: (p) => `Choose ${p.key} With More Confidence`,
-  "behind-the-scenes": (p) => `The Details We Look At Before You Choose ${p.key}`,
+  comparison: (p) => `${p.key}: Which Option Fits You Best?`,
   tips: (p) => `5 Smart Checks Before Buying ${p.key}`,
-  motivation: () => "Your Setup Should Work As Hard As You Do",
   "product-showcase": (p) => `A Closer Look At ${p.hero}`,
-  "customer-testimonial": (p) => `Why Buyers Choose The Right ${p.key}`,
-  "trending-style": (p) => `POV: You Finally Found The Right ${p.key}`,
+  "customer-proof": (p) => `Why Buyers Choose The Right ${p.key}`,
 };
 
 export const HOOK_TEMPLATES: Record<ContentTypeId, (p: NicheProfile) => string> = {
   educational: (p) => `The right ${p.subject} starts with checking ${p.detail}.`,
   promotional: (p) => `Looking for ${p.subject}? Start with the details that affect your everyday use.`,
-  storytelling: () => "They wanted an upgrade, but they did not want to choose the wrong one.",
-  sales: (p) => `You are not just buying ${p.subject}; you are choosing how your setup performs.`,
-  "behind-the-scenes": (p) => `Before you choose ${p.subject}, a few practical details deserve attention.`,
+  comparison: (p) => `The best ${p.subject} depends on the details that match your everyday use.`,
   tips: (p) => `Before you buy ${p.subject}, save these checks.`,
-  motivation: () => "The best setup is the one that removes friction from your day.",
   "product-showcase": (p) => `Look closer at ${p.hero}; the useful details are in the specification.`,
-  "customer-testimonial": () => "The best upgrade is the one that makes everyday use feel easier.",
-  "trending-style": (p) => `POV: you found ${p.subject} that actually fits your routine.`,
+  "customer-proof": () => "The best upgrade is the one that makes everyday use feel easier.",
 };
 
 export const TONE_OPENERS: Record<ToneId, string> = {
