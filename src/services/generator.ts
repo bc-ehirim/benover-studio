@@ -1,4 +1,4 @@
-import type { GeneratedContent, GenerationInput } from "@/types";
+import type { GeneratedContent, GenerationInput, ToneId } from "@/types";
 import { DEFAULT_CTA } from "./constants";
 import { resolveNiche } from "./prompt-engine";
 import {
@@ -82,8 +82,10 @@ function formatCaption(
   cta: string,
   business: string,
   niche: string,
+  tone: ToneId,
 ): string {
   const location = `📍 ${business} · ${niche}`;
+  const bodySeparator = tone === "luxury" ? "\n\n" : "\n";
 
   if (input.platform === "tiktok") {
     const shortBody = body.slice(0, 3).map((line) => line.replace(/^\d+\.\s*/, ""));
@@ -101,7 +103,7 @@ function formatCaption(
     return [
       `${opener} ${hook}`,
       "",
-      body.join("\n\n"),
+      body.join(bodySeparator === "\n" ? "\n\n" : bodySeparator),
       "",
       `${closer}`,
       `\n${cta}`,
@@ -113,13 +115,67 @@ function formatCaption(
   return [
     `${opener} ${hook}`,
     "",
-    body.join("\n"),
+    body.join(bodySeparator),
     "",
     closer,
     cta,
     "",
     `${location} · ${PLATFORM_NAME[input.platform]}`,
   ].join("\n");
+}
+
+function applyToneToText(text: string, tone: ToneId, index: number): string {
+  switch (tone) {
+    case "street-nigerian":
+      return text
+        .replace(/Before you spend a naira on/i, "Before you drop money on")
+        .replace(/Most disappointments are not bad luck\./, "No be bad luck every time.")
+        .replace(/That is exactly why /, "Na why ")
+        .replace(/\.$/, " o.");
+    case "luxury":
+      return text
+        .replace(/clean, /gi, "considered, ")
+        .replace(/fair number and honest condition/gi, "transparent value and assured condition")
+        .replace(/quality, price honesty and after-sales support/gi, "quiet quality and thoughtful support")
+        .replace(/\.$/, ".");
+    case "funny":
+      return index === 0 ? `${text.replace(/\.$/, "")} (yes, really).` : text;
+    case "emotional":
+      return text
+        .replace(/Most disappointments are not bad luck\./, "The disappointment stays with you long after the purchase.")
+        .replace(/Buy once\. Rest\. That is the whole offer\./, "Buy once. Rest. You deserve that peace of mind.");
+    case "corporate":
+      return index === 0 ? `Recommendation: ${text}` : text;
+    case "gen-z":
+      return text
+        .toLowerCase()
+        .replace(/[.!?]+$/, "")
+        .replace(/^before /, "real talk: before ")
+        .concat(".");
+    case "professional":
+    default:
+      return text;
+  }
+}
+
+function applyToneToHook(hook: string, tone: ToneId): string {
+  switch (tone) {
+    case "street-nigerian":
+      return `${hook.replace(/\.$/, "")} — no shortcuts.`;
+    case "luxury":
+      return hook.replace(/^Most people/, "Many buyers");
+    case "funny":
+      return `${hook.replace(/\.$/, "")} (we wish it were that simple).`;
+    case "emotional":
+      return `${hook.replace(/\.$/, "")} — and that regret is avoidable.`;
+    case "corporate":
+      return `A practical point: ${hook.toLowerCase()}`;
+    case "gen-z":
+      return `${hook.toLowerCase().replace(/[.!?]+$/, "")} fr.`;
+    case "professional":
+    default:
+      return hook;
+  }
 }
 
 function bodyFor(
@@ -264,8 +320,20 @@ export function generateContent(input: GenerationInput): GeneratedContent {
 
   const opener = TONE_OPENERS[input.tone];
   const closer = TONE_CLOSERS[input.tone];
+  const styledBody = body.map((line, index) => applyToneToText(line, input.tone, index));
+  const styledHook = applyToneToHook(hook, input.tone);
 
-  const caption = formatCaption(input, body, opener, hook, closer, cta, business, niche);
+  const caption = formatCaption(
+    input,
+    styledBody,
+    opener,
+    styledHook,
+    closer,
+    cta,
+    business,
+    niche,
+    input.tone,
+  );
 
   return {
     id: `${input.platform}-${input.contentType}-${niche}-${input.tone}`.toLowerCase(),
@@ -275,7 +343,7 @@ export function generateContent(input: GenerationInput): GeneratedContent {
     hashtags: buildHashtags(input, profile),
     cta,
     imagePrompt: buildImagePrompt(profile, input),
-    videoPrompt: buildVideoPrompt(profile, input, hook, cta),
+    videoPrompt: buildVideoPrompt(profile, input, styledHook, cta),
     platform: input.platform,
     contentType: input.contentType,
     tone: input.tone,
