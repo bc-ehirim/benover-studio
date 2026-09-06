@@ -92,7 +92,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { property: "og:type", content: "website" },
       { property: "og:url", content: `${siteUrl}/` },
       { property: "og:image", content: socialImage },
-      { property: "og:image:alt", content: "BENOVER Content Studio" },
+      { property: "og:image:alt", content: "Benover Tech gadget marketing generator" },
       { name: "twitter:card", content: "summary_large_image" },
       { name: "twitter:title", content: siteTitle },
       { name: "twitter:description", content: siteDescription },

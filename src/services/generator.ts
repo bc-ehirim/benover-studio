@@ -76,7 +76,7 @@ function buildHashtags(input: GenerationInput, profile: NicheProfile): string[] 
         isNigeriaContext || !/(nigeria|lagos|naija|nigerian|lekki|abuja|ukused)/i.test(tag),
     )
     .forEach(push);
-  if (profile.key === "Phones" && isNigeriaContext) push("#iPhoneNigeria");
+  if (profile.key === "iPhone" && isNigeriaContext) push("#iPhoneNigeria");
   locationTags.forEach(([name, tag]) => {
     if (new RegExp(name, "i").test(context)) push(tag);
   });
@@ -331,7 +331,7 @@ export function generateContent(input: GenerationInput): GeneratedContent {
   input = normalizeInput(input);
   const niche = resolveNiche(input);
   const profile = profileFor(niche);
-  const business = input.business?.trim() || "BENOVERTECH";
+  const business = input.business?.trim() || "Benover Tech";
   const audience = input.audience?.trim() || `${niche.toLowerCase()} buyers`;
   const cta = input.cta?.trim() || DEFAULT_CTA;
 

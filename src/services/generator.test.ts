@@ -5,7 +5,7 @@ import { generateContent } from "./generator";
 const baseInput = {
   platform: "instagram" as const,
   contentType: "educational" as const,
-  niche: "Phones",
+  niche: "iPhone",
   tone: "professional" as const,
 };
 
@@ -22,24 +22,24 @@ describe("generateContent", () => {
     const result = generateContent({
       ...baseInput,
       niche: "custom",
-      customNiche: "Solar installation",
+      customNiche: "Gaming consoles",
     });
 
-    expect(result.niche).toBe("Solar installation");
-    expect(result.caption).toContain("solar installation");
-    expect(result.hashtags).toContain("#SolarInstallation");
+    expect(result.niche).toBe("Gaming consoles");
+    expect(result.caption).toContain("Gaming consoles");
+    expect(result.hashtags).toContain("#GamingConsoles");
   });
 
   it("propagates business, audience, and CTA through the result", () => {
     const result = generateContent({
       ...baseInput,
-      business: "Northstar Devices",
+      business: "Benover Tech",
       audience: "Toronto students",
       cta: "Book a device consultation today.",
     });
     const combined = [result.caption, result.imagePrompt, result.videoPrompt].join("\n");
 
-    expect(combined).toContain("Northstar Devices");
+    expect(combined).toContain("Benover Tech");
     expect(combined).toContain("Toronto students");
     expect(result.caption).toContain("Book a device consultation today.");
     expect(result.videoPrompt).toContain("Book a device consultation today.");
@@ -63,8 +63,8 @@ describe("generateContent", () => {
     const genZ = generateContent({ ...baseInput, tone: "gen-z" });
 
     expect(professional.caption).not.toBe(luxury.caption);
-    expect(luxury.caption).toContain("Many buyers");
-    expect(genZ.caption).toContain("ok real talk for a sec.");
+    expect(luxury.caption).toContain("Quietly, the right details");
+    expect(genZ.caption).toContain("ok, quick setup check.");
     expect(genZ.caption).not.toContain("Most people");
   });
 

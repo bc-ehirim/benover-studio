@@ -1,7 +1,7 @@
 /**
  * AI Provider registry — INACTIVE placeholders.
  *
- * BENOVER Content Studio is fully offline: generation happens locally in
+ * Benover Tech is fully offline: generation happens locally in
  * `src/services/generator.ts`. These modules exist so a provider can be wired
  * later. None of them perform network calls, and none accept API keys.
  */
