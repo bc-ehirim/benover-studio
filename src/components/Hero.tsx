@@ -41,7 +41,7 @@ export function Hero() {
           className="inline-flex items-center gap-2 rounded-full border border-border bg-surface/70 px-3.5 py-1.5 text-xs text-muted-foreground backdrop-blur"
         >
           <Sparkles className="h-3.5 w-3.5 text-primary" />
-          Benover Tech gadget marketing · Offline by design
+          Benover Tech gadget marketing · Free media creation
         </motion.span>
 
         <motion.h1

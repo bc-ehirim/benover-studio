@@ -2,6 +2,7 @@ import { motion } from "framer-motion";
 import { Hash, Image as ImageIcon, Info, Video } from "lucide-react";
 import { CopyButton } from "./CopyButton";
 import { DownloadButton } from "./DownloadButton";
+import { MediaGenerator } from "./MediaGenerator";
 import { PromptCard } from "./PromptCard";
 import { PLATFORMS } from "@/services/constants";
 import { resultToText } from "@/utils/export";
@@ -98,6 +99,8 @@ export function ResultCard({ result }: ResultCardProps) {
         </div>
       </motion.div>
 
+      <MediaGenerator result={result} />
+
       <PromptCard
         title="Image Prompt"
         description="Paste into any image model to create the visual."
@@ -121,8 +124,8 @@ export function ResultCard({ result }: ResultCardProps) {
       >
         <Info className="mt-0.5 h-4 w-4 shrink-0 text-muted-foreground" />
         <p className="text-sm text-muted-foreground">
-          <span className="font-medium text-foreground">Publishing stays manual.</span> Copy,
-          create media elsewhere, then post manually.
+          <span className="font-medium text-foreground">Media creation is now in the studio.</span>{" "}
+          Download the generated image or browser-assembled video, then post manually.
         </p>
       </motion.div>
     </motion.div>

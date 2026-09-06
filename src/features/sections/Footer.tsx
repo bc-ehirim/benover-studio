@@ -4,8 +4,8 @@ export function Footer() {
       <div className="mx-auto max-w-3xl">
         <p className="text-sm font-semibold">Benover Tech</p>
         <p className="mt-2 text-xs leading-relaxed text-muted-foreground">
-          Gadget marketing content is generated on your device. No accounts, databases, or uploads.
-          Copy, create media elsewhere, then post manually.
+          Captions and videos are created locally. Images use a free online service; no account or
+          upload is required. Download your media, then post manually.
         </p>
         <p className="mt-4 text-xs text-muted-foreground">
           © {new Date().getFullYear()} Benover Tech

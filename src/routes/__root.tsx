@@ -15,7 +15,7 @@ import { reportLovableError } from "../lib/lovable-error-reporting";
 const siteUrl = "https://benovertech.com";
 const siteTitle = "Benover Tech | Gadget Content Generator";
 const siteDescription =
-  "Create platform-ready social captions, hashtags, image prompts and video prompts for Benover Tech gadgets, locally and without uploads.";
+  "Create Benover Tech gadget captions locally, generate images with a free online service, and assemble short videos in your browser.";
 const socialImage = `${siteUrl}/og-image.svg`;
 
 function NotFoundComponent() {
