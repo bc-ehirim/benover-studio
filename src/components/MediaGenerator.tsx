@@ -23,13 +23,15 @@ export function MediaGenerator({ result }: MediaGeneratorProps) {
   const videoUrlRef = useRef<string | null>(null);
 
   useEffect(() => {
+    imageAbort.current?.abort();
+    if (imageUrlRef.current) URL.revokeObjectURL(imageUrlRef.current);
+    if (videoUrlRef.current) URL.revokeObjectURL(videoUrlRef.current);
     setImageUrl(null);
     setImageExtension("jpg");
     setVideoUrl(null);
     setError(null);
     imageUrlRef.current = null;
     videoUrlRef.current = null;
-    imageAbort.current?.abort();
   }, [result.id]);
 
   useEffect(() => {
@@ -99,7 +101,7 @@ export function MediaGenerator({ result }: MediaGeneratorProps) {
         cta: result.cta,
         vertical: result.platform === "tiktok",
       });
-      if (videoUrl) URL.revokeObjectURL(videoUrl);
+      if (videoUrlRef.current) URL.revokeObjectURL(videoUrlRef.current);
       const nextVideoUrl = URL.createObjectURL(blob);
       videoUrlRef.current = nextVideoUrl;
       setVideoUrl(nextVideoUrl);
@@ -157,15 +159,20 @@ export function MediaGenerator({ result }: MediaGeneratorProps) {
             Cancel {imageElapsed > 0 ? `(${imageElapsed}s)` : ""}
           </AnimatedButton>
         )}
-        <AnimatedButton
-          size="sm"
-          variant="outline"
-          onClick={handleGenerateVideo}
-          disabled={imageLoading || videoLoading}
-        >
-          {videoLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Video className="h-4 w-4" />}
-          {videoLoading ? "Assembling video..." : "Create free video"}
-        </AnimatedButton>
+        {typeof window !== "undefined" &&
+          typeof MediaRecorder !== "undefined" &&
+          typeof HTMLCanvasElement !== "undefined" &&
+          "captureStream" in HTMLCanvasElement.prototype && (
+            <AnimatedButton
+              size="sm"
+              variant="outline"
+              onClick={handleGenerateVideo}
+              disabled={imageLoading || videoLoading}
+            >
+              {videoLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Video className="h-4 w-4" />}
+              {videoLoading ? "Assembling video..." : "Create free video"}
+            </AnimatedButton>
+          )}
         {imageUrl && (
           <a
             href={imageUrl}

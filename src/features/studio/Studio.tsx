@@ -41,6 +41,14 @@ export function Studio() {
   const [business, setBusiness] = useState("");
   const [audience, setAudience] = useState("");
   const [cta, setCta] = useState("");
+  const [model, setModel] = useState("");
+  const [storage, setStorage] = useState("");
+  const [ram, setRam] = useState("");
+  const [condition, setCondition] = useState("");
+  const [batteryHealth, setBatteryHealth] = useState("");
+  const [color, setColor] = useState("");
+  const [price, setPrice] = useState("");
+  const [availability, setAvailability] = useState("");
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState<GeneratedContent | null>(null);
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -65,6 +73,14 @@ export function Studio() {
         business,
         audience,
         cta,
+        model,
+        storage,
+        ram,
+        condition,
+        batteryHealth,
+        color,
+        price,
+        availability,
         ...overrides,
       };
       setLoading(true);
@@ -76,7 +92,24 @@ export function Studio() {
         setLoading(false);
       }, delay);
     },
-    [platform, contentType, niche, customNiche, tone, business, audience, cta],
+    [
+      platform,
+      contentType,
+      niche,
+      customNiche,
+      tone,
+      business,
+      audience,
+      cta,
+      model,
+      storage,
+      ram,
+      condition,
+      batteryHealth,
+      color,
+      price,
+      availability,
+    ],
   );
 
   function handleGenerateToday() {
@@ -263,6 +296,39 @@ export function Studio() {
                   className={`${inputClass} mt-2.5`}
                 />
               </div>
+            </div>
+
+            <div>
+              <p className={labelClass}>Product details (optional)</p>
+              <div className="mt-3 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+                {[
+                  ["model", "Model", model, setModel, "e.g. Galaxy S24"],
+                  ["storage", "Storage", storage, setStorage, "e.g. 256GB"],
+                  ["ram", "RAM", ram, setRam, "e.g. 16GB"],
+                  ["condition", "Condition", condition, setCondition, "New or used"],
+                  ["batteryHealth", "Battery health", batteryHealth, setBatteryHealth, "e.g. 92%"],
+                  ["color", "Colour", color, setColor, "e.g. Graphite"],
+                  ["price", "Price", price, setPrice, "e.g. Ask for current price"],
+                  ["availability", "Availability", availability, setAvailability, "In stock or pre-order"],
+                ].map(([id, label, value, setter, placeholder]) => (
+                  <div key={id as string}>
+                    <label className="text-xs text-muted-foreground" htmlFor={id as string}>
+                      {label as string}
+                    </label>
+                    <input
+                      id={id as string}
+                      value={value as string}
+                      onChange={(event) => (setter as (value: string) => void)(event.target.value)}
+                      maxLength={INPUT_LIMITS.productField}
+                      placeholder={placeholder as string}
+                      className={`${inputClass} mt-1.5 h-10`}
+                    />
+                  </div>
+                ))}
+              </div>
+              <p className="mt-2 text-[11px] text-muted-foreground">
+                Add only facts you are ready to publish. Generated copy remains a draft for review.
+              </p>
             </div>
 
             <AnimatedButton

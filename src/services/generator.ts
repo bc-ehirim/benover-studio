@@ -40,7 +40,29 @@ function normalizeInput(input: GenerationInput): GenerationInput {
     business: limitInput(input.business, INPUT_LIMITS.business),
     audience: limitInput(input.audience, INPUT_LIMITS.audience),
     cta: limitInput(input.cta, INPUT_LIMITS.cta),
+    model: limitInput(input.model, INPUT_LIMITS.productField),
+    storage: limitInput(input.storage, INPUT_LIMITS.productField),
+    ram: limitInput(input.ram, INPUT_LIMITS.productField),
+    condition: limitInput(input.condition, INPUT_LIMITS.productField),
+    batteryHealth: limitInput(input.batteryHealth, INPUT_LIMITS.productField),
+    color: limitInput(input.color, INPUT_LIMITS.productField),
+    price: limitInput(input.price, INPUT_LIMITS.productField),
+    availability: limitInput(input.availability, INPUT_LIMITS.productField),
   };
+}
+
+function productDetails(input: GenerationInput): string {
+  const details = [
+    input.model && `model: ${input.model}`,
+    input.storage && `storage: ${input.storage}`,
+    input.ram && `RAM: ${input.ram}`,
+    input.condition && `condition: ${input.condition}`,
+    input.batteryHealth && `battery health: ${input.batteryHealth}`,
+    input.color && `colour: ${input.color}`,
+    input.price && `price: ${input.price}`,
+    input.availability && `availability: ${input.availability}`,
+  ].filter(Boolean);
+  return details.length ? details.join(", ") : "specific product details supplied by the seller";
 }
 
 function buildHashtags(input: GenerationInput, profile: NicheProfile): string[] {
@@ -225,23 +247,11 @@ function bodyFor(
         `No inflated "discount" games — just a fair number and honest condition.`,
         `${profile.proof}.`,
       ];
-    case "storytelling":
+    case "comparison":
       return [
-        `He had already been burned twice. Third time, he came to us with his guard up.`,
-        `We showed him ${profile.detail} before he paid anything.`,
-        `He left with ${profile.hero} — and sent two of his friends the same week.`,
-      ];
-    case "sales":
-      return [
-        `${profile.objection}`,
-        `That is exactly why ${profile.proof}.`,
-        `Buy once. Rest. That is the whole offer.`,
-      ];
-    case "behind-the-scenes":
-      return [
-        `Here is what happens before your order leaves us.`,
-        `We check ${profile.detail}, photograph it, then package it.`,
-        `Boring? Maybe. But it is why our customers come back.`,
+        `Compare ${profile.detail} before you decide.`,
+        `The right choice depends on your routine, priorities and budget.`,
+        `${profile.proof}.`,
       ];
     case "tips":
       return [
@@ -251,30 +261,23 @@ function bodyFor(
         `4. Never pay before you inspect.`,
         `5. Buy from people who let you check everything.`,
       ];
-    case "motivation":
-      return [
-        `Your competition is not better. They are just more consistent.`,
-        `One post a day compounds faster than one perfect post a month.`,
-        `${business} exists so ${audience} stop guessing.`,
-      ];
     case "product-showcase":
       return [
         `${profile.hero}. Look at the finish, not just the price tag.`,
         `We verify ${profile.detail} before it is listed.`,
         `${profile.proof}.`,
       ];
-    case "customer-testimonial":
+    case "customer-proof":
       return [
-        `"I should have come here first."`,
-        `That is what she said after we walked her through ${profile.detail}.`,
-        `${profile.proof} — every single time.`,
+        `A good buying decision starts with clear information.`,
+        `${profile.proof}.`,
+        `${business} helps ${audience} compare before they commit.`,
       ];
-    case "trending-style":
     default:
       return [
-        `POV: you finally found people who explain ${profile.detail} before collecting money.`,
-        `No stories. No excuses. No "network problem".`,
+        `${profile.hero}.`,
         `${profile.proof}.`,
+        `${business} helps ${audience} choose with more confidence.`,
       ];
   }
 }
@@ -287,7 +290,7 @@ function buildImagePrompt(
 ): string {
   return [
     `Premium editorial product photograph: ${profile.imageSubject}.`,
-    `Brand context: ${business}. Target audience: ${audience}.`,
+    `Brand context: ${business}. Target audience: ${audience}. Product details: ${productDetails(input)}.`,
     `Clean graphite background with a cool blue key light and a restrained teal accent, premium but approachable retail styling.`,
     `Shot on 85mm lens, f/2.0, shallow depth of field, crisp micro-detail on edges and texture, gentle reflection under the subject.`,
     `Composition: subject slightly off-centre with generous negative space at the top for a headline overlay.`,
@@ -310,7 +313,7 @@ function buildVideoPrompt(
     `AI VIDEO PROMPT — works in Veo, Kling, Hailuo, Sora, Runway and InVideo AI`,
     ``,
     `FORMAT: ${ratio}, 15–25 seconds, polished premium gadget retail aesthetic with clean graphite, blue and teal accents.`,
-    `BRAND CONTEXT: ${business}. TARGET AUDIENCE: ${audience}.`,
+    `BRAND CONTEXT: ${business}. TARGET AUDIENCE: ${audience}. PRODUCT DETAILS: ${productDetails(input)}.`,
     ``,
     `OPENING HOOK (0–3s): ${hook}`,
     ``,
@@ -351,13 +354,18 @@ export function generateContent(input: GenerationInput): GeneratedContent {
         "Check 1: Battery health. Open Settings and review the number yourself so you understand the device's likely daily performance.",
         "Check 2: iCloud status. Confirm the phone is ready for its next owner before you commit.",
         "Check 3: The display and cameras. Test touch response, brightness, focus and image quality across the device.",
-        `At ${business}, we test battery health, storage, iCloud status and panel originality in front of you, so ${audience} can buy with confidence.`,
+        `At ${business}, we discuss the supplied product details clearly, so ${audience} can buy with confidence.`,
       ]
     : bodyFor(input, profile, business, audience);
 
+  const details = productDetails(input);
+  const detailedBody = body.map((line, index) =>
+    index === body.length - 1 ? `${line} Product details: ${details}.` : line,
+  );
+
   const opener = TONE_OPENERS[input.tone];
   const closer = TONE_CLOSERS[input.tone];
-  const styledBody = body.map((line, index) => applyToneToText(line, input.tone, index));
+  const styledBody = detailedBody.map((line, index) => applyToneToText(line, input.tone, index));
   const styledHook = applyToneToHook(hook, input.tone);
 
   const caption = formatCaption(
