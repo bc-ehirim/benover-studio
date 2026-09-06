@@ -1,5 +1,5 @@
 import { forwardRef, useCallback, useRef, useState } from "react";
-import { motion } from "framer-motion";
+import { motion, type HTMLMotionProps } from "framer-motion";
 import { cn } from "@/lib/utils";
 
 type Variant = "primary" | "ghost" | "outline" | "subtle";
@@ -26,8 +26,7 @@ interface Ripple {
   y: number;
 }
 
-export interface AnimatedButtonProps
-  extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+export interface AnimatedButtonProps extends Omit<HTMLMotionProps<"button">, "ref"> {
   variant?: Variant;
   size?: Size;
 }
@@ -65,7 +64,7 @@ export const AnimatedButton = forwardRef<HTMLButtonElement, AnimatedButtonProps>
           sizes[size],
           className,
         )}
-        {...(props as React.ComponentProps<typeof motion.button>)}
+        {...props}
       >
         {ripples.map((r) => (
           <motion.span
