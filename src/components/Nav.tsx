@@ -31,9 +31,6 @@ export function Nav() {
           <button onClick={() => scrollToId("workflow")} className="hover:text-foreground">
             Workflow
           </button>
-          <button onClick={() => scrollToId("features")} className="hover:text-foreground">
-            About
-          </button>
         </nav>
 
         <AnimatedButton size="sm" className="hidden sm:inline-flex" onClick={() => scrollToId("studio")}>

@@ -1,9 +1,9 @@
 /**
  * AI Provider registry — INACTIVE placeholders.
  *
- * Benover Tech is fully offline: generation happens locally in
- * `src/services/generator.ts`. These modules exist so a provider can be wired
- * later. None of them perform network calls, and none accept API keys.
+ * Captions and video assembly run locally. Image generation uses an online
+ * provider in `src/services/media.ts`. These modules are inactive placeholders
+ * for future server-side providers; none of them accept browser API keys.
  */
 import { openAIProvider } from "./openai";
 import { geminiProvider } from "./gemini";
