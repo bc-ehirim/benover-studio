@@ -26,7 +26,9 @@ interface Ripple {
   y: number;
 }
 
-export interface AnimatedButtonProps extends Omit<HTMLMotionProps<"button">, "ref"> {
+export interface AnimatedButtonProps
+  extends Omit<HTMLMotionProps<"button">, "ref" | "children"> {
+  children?: React.ReactNode;
   variant?: Variant;
   size?: Size;
 }
