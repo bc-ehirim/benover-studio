@@ -1,24 +1,44 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { motion } from "framer-motion";
+import { Hero } from "@/components/Hero";
+import { Nav } from "@/components/Nav";
+import { Studio } from "@/features/studio/Studio";
+import { Workflow } from "@/features/sections/Workflow";
+import { ComingSoon } from "@/features/sections/ComingSoon";
+import { Footer } from "@/features/sections/Footer";
 
-// No head() here: the home route inherits title/description/og/twitter from
-// __root.tsx, and ships no og:image so serve-time hosting can inject the
-// project's social preview (explicit og:image or latest screenshot).
+const title = "BENOVER Content Studio — Never run out of content again";
+const description =
+  "Generate Facebook, Instagram and TikTok captions, 15 hashtags, image prompts and AI video prompts in seconds. Fully offline, no accounts.";
+
 export const Route = createFileRoute("/")({
+  head: () => ({
+    meta: [
+      { title },
+      { name: "description", content: description },
+      { property: "og:title", content: title },
+      { property: "og:description", content: description },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
+    ],
+  }),
   component: Index,
 });
 
-// IMPORTANT: Replace this placeholder. See ./README.md for routing conventions.
 function Index() {
   return (
-    <div
-      className="flex min-h-screen items-center justify-center"
-      style={{ backgroundColor: "#fcfbf8" }}
+    <motion.main
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.5 }}
+      className="min-h-screen bg-background"
     >
-      <img
-        data-lovable-blank-page-placeholder="REMOVE_THIS"
-        src="https://cdn.gpteng.co/blank-app-v1.svg"
-        alt="Your app will live here!"
-      />
-    </div>
+      <Nav />
+      <Hero />
+      <Studio />
+      <Workflow />
+      <ComingSoon />
+      <Footer />
+    </motion.main>
   );
 }
