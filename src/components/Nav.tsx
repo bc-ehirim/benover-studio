@@ -14,30 +14,30 @@ export function Nav() {
         <button
           onClick={() => scrollToId("top")}
           className="flex items-center gap-2.5"
-          aria-label="BENOVER Content Studio home"
+          aria-label="Benover Tech home"
         >
           <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-[image:var(--gradient-brand)] text-sm font-bold text-primary-foreground">
             B
           </span>
           <span className="text-sm font-semibold tracking-tight">
-            BENOVER <span className="text-muted-foreground">Content Studio</span>
+            Benover <span className="text-muted-foreground">Tech</span>
           </span>
         </button>
 
         <nav className="hidden items-center gap-7 text-sm text-muted-foreground md:flex">
           <button onClick={() => scrollToId("studio")} className="hover:text-foreground">
-            Studio
+            Generator
           </button>
           <button onClick={() => scrollToId("workflow")} className="hover:text-foreground">
             Workflow
           </button>
           <button onClick={() => scrollToId("features")} className="hover:text-foreground">
-            Features
+            About
           </button>
         </nav>
 
         <AnimatedButton size="sm" className="hidden sm:inline-flex" onClick={() => scrollToId("studio")}>
-          Generate
+          Create Post
         </AnimatedButton>
       </div>
     </motion.header>

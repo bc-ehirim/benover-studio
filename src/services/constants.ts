@@ -50,30 +50,30 @@ export const TONES: ToneOption[] = [
   { id: "gen-z", name: "Gen Z" },
 ];
 
-/** Preset pack foregrounded for BENOVERTECH. */
+/** Gadget categories supported by Benover Tech. */
 export const PRESET_PACK = [
-  "Phones",
+  "iPhone",
+  "Samsung Phones",
   "Laptops",
   "Accessories",
-  "Graphic Design",
-  "Branding",
-  "Printing",
-  "Web Development",
+  "Tablets",
+  "Smartwatches",
+  "Earbuds & Audio",
+  "Chargers & Power Banks",
+  "Monitors",
 ];
 
 export const NICHES: NicheOption[] = [
-  { id: "Phones", name: "Phones", preset: true },
+  { id: "iPhone", name: "iPhone", preset: true },
+  { id: "Samsung Phones", name: "Samsung Phones", preset: true },
   { id: "Laptops", name: "Laptops", preset: true },
   { id: "Accessories", name: "Accessories", preset: true },
-  { id: "Graphic Design", name: "Graphic Design", preset: true },
-  { id: "Branding", name: "Branding", preset: true },
-  { id: "Printing", name: "Printing", preset: true },
-  { id: "Web Development", name: "Web Development", preset: true },
-  { id: "Web Design", name: "Web Design" },
-  { id: "Fashion", name: "Fashion" },
-  { id: "Food", name: "Food" },
-  { id: "Real Estate", name: "Real Estate" },
-  { id: "custom", name: "Custom niche…" },
+  { id: "Tablets", name: "Tablets", preset: true },
+  { id: "Smartwatches", name: "Smartwatches", preset: true },
+  { id: "Earbuds & Audio", name: "Earbuds & Audio", preset: true },
+  { id: "Chargers & Power Banks", name: "Chargers & Power Banks", preset: true },
+  { id: "Monitors", name: "Monitors", preset: true },
+  { id: "custom", name: "Custom gadget…" },
 ];
 
 export interface CalendarDay {
@@ -135,8 +135,8 @@ export function dayPlan(dayIndex: number): CalendarDay {
   return WEEK_CALENDAR.find((d) => d.index === dayIndex) ?? WEEK_CALENDAR[0]!;
 }
 
-export const DEFAULT_CTA = "Send us a WhatsApp message today.";
-export const BRAND = "BENOVERTECH";
+export const DEFAULT_CTA = "Message Benover Tech for current availability.";
+export const BRAND = "Benover Tech";
 
 export const INPUT_LIMITS = {
   business: 80,

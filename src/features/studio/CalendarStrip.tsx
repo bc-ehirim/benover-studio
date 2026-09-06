@@ -14,10 +14,10 @@ export function CalendarStrip({ todayIndex, activeType, onPick }: CalendarStripP
     <div className="panel p-4">
       <div className="flex items-center gap-2 text-sm font-semibold">
         <CalendarDays className="h-4 w-4 text-primary" />
-        Weekly content calendar
+        Weekly gadget content plan
       </div>
       <p className="mt-1 text-xs text-muted-foreground">
-        A fixed plan so you never stare at a blank screen.
+        A simple weekly rhythm for showcasing and explaining your products.
       </p>
 
       <div className="no-scrollbar -mx-1 mt-3 flex gap-2 overflow-x-auto px-1 pb-1">

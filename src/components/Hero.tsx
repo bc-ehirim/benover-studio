@@ -41,21 +41,22 @@ export function Hero() {
           className="inline-flex items-center gap-2 rounded-full border border-border bg-surface/70 px-3.5 py-1.5 text-xs text-muted-foreground backdrop-blur"
         >
           <Sparkles className="h-3.5 w-3.5 text-primary" />
-          Offline content studio · No accounts, no keys
+          Benover Tech gadget marketing · Offline by design
         </motion.span>
 
         <motion.h1
           variants={fadeUp}
           className="mt-6 text-4xl font-semibold leading-[1.05] sm:text-6xl md:text-7xl"
         >
-          Never run out of <span className="text-gradient">content</span> again.
+          Make every <span className="text-gradient">gadget</span> easier to choose.
         </motion.h1>
 
         <motion.p
           variants={fadeUp}
           className="mx-auto mt-5 max-w-xl text-base leading-relaxed text-muted-foreground sm:text-lg"
         >
-          Generate Facebook, Instagram and TikTok content in seconds.
+          Create professional Facebook, Instagram and TikTok posts for iPhones, Samsung phones,
+          laptops and more.
         </motion.p>
 
         <motion.div
@@ -66,13 +67,13 @@ export function Hero() {
             Generate Content
             <ArrowRight className="h-4 w-4" />
           </AnimatedButton>
-          <AnimatedButton variant="outline" size="lg" onClick={() => scrollToId("features")}>
-            Explore Features
+          <AnimatedButton variant="outline" size="lg" onClick={() => scrollToId("workflow")}>
+            See the workflow
           </AnimatedButton>
         </motion.div>
 
         <motion.p variants={fadeUp} className="mt-6 text-xs text-muted-foreground">
-          Captions · 15 hashtags · Image prompt · AI video prompt
+          Product captions · 15 hashtags · Image prompt · AI video prompt
         </motion.p>
       </motion.div>
     </section>

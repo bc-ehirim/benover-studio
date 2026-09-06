@@ -8,14 +8,14 @@ const steps = [
     step: "01",
     title: "Generate",
     description:
-      "Pick platform, type, niche and tone. You get a title, hook, caption, 15 hashtags and both media prompts in seconds.",
+      "Choose a gadget category, platform, campaign type and tone. Get a title, hook, caption, 15 hashtags and both media prompts.",
     icon: <Wand2 className="h-5 w-5" />,
   },
   {
     step: "02",
     title: "Download",
     description:
-      "Copy any block, or download benover-content.txt with the whole result so nothing is lost between devices.",
+      "Copy any block, or download the complete Benover Tech product post as a text file.",
     icon: <Download className="h-5 w-5" />,
   },
   {

@@ -35,7 +35,7 @@ export function Studio() {
   const [todayIndex, setTodayIndex] = useState(1);
   const [platform, setPlatform] = useState<PlatformId>("instagram");
   const [contentType, setContentType] = useState<ContentTypeId>("educational");
-  const [niche, setNiche] = useState("Phones");
+  const [niche, setNiche] = useState("iPhone");
   const [customNiche, setCustomNiche] = useState("");
   const [tone, setTone] = useState<ToneId>("professional");
   const [business, setBusiness] = useState("");
@@ -104,11 +104,11 @@ export function Studio() {
               The Studio
             </span>
             <h2 className="mt-4 text-3xl font-semibold sm:text-4xl">
-              Build today&apos;s post in four taps
+              Build Benover Tech&apos;s next product post
             </h2>
             <p className="mx-auto mt-3 max-w-lg text-sm text-muted-foreground">
-              Pick a platform, a content type, your niche and a tone. Everything is generated on
-              your device.
+              Turn a gadget category, campaign type and tone into ready-to-publish social content.
+              Everything is generated on your device.
             </p>
           </motion.div>
 
@@ -167,7 +167,7 @@ export function Studio() {
             <div className="grid gap-4 sm:grid-cols-2">
               <div>
                 <label className={labelClass} htmlFor="niche">
-                  Niche
+                  Product category
                 </label>
                 <select
                   id="niche"
@@ -175,14 +175,14 @@ export function Studio() {
                   onChange={(e) => setNiche(e.target.value)}
                   className={`${inputClass} mt-3 appearance-none`}
                 >
-                  <optgroup label="BENOVERTECH preset pack">
+                  <optgroup label="Benover Tech gadgets">
                     {NICHES.filter((n) => n.preset).map((n) => (
                       <option key={n.id} value={n.id}>
                         {n.name}
                       </option>
                     ))}
                   </optgroup>
-                  <optgroup label="More niches">
+                  <optgroup label="More gadget categories">
                     {NICHES.filter((n) => !n.preset).map((n) => (
                       <option key={n.id} value={n.id}>
                         {n.name}
@@ -191,13 +191,13 @@ export function Studio() {
                   </optgroup>
                 </select>
                 <p className="mt-2 text-[11px] leading-relaxed text-muted-foreground">
-                  Preset pack: {PRESET_PACK.join(" · ")}
+                  Categories: {PRESET_PACK.join(" · ")}
                 </p>
               </div>
 
               <div>
                 <label className={labelClass} htmlFor="customNiche">
-                  Custom niche (optional)
+                  Custom gadget category (optional)
                 </label>
                 <input
                   id="customNiche"
@@ -205,13 +205,13 @@ export function Studio() {
                   onChange={(e) => setCustomNiche(e.target.value)}
                   maxLength={INPUT_LIMITS.customNiche}
                   placeholder={
-                    niche === "custom" ? "e.g. Solar installation" : "Select Custom niche… first"
+                    niche === "custom" ? "e.g. Gaming console" : "Select Custom gadget… first"
                   }
                   disabled={niche !== "custom"}
                   className={`${inputClass} mt-3 disabled:cursor-not-allowed disabled:opacity-50`}
                 />
                 <p className="mt-2 text-[11px] text-muted-foreground">
-                  Used when “Custom niche…” is selected.
+                  Used when “Custom gadget…” is selected.
                 </p>
               </div>
             </div>
@@ -233,7 +233,7 @@ export function Studio() {
                   value={business}
                   onChange={(e) => setBusiness(e.target.value)}
                   maxLength={INPUT_LIMITS.business}
-                  placeholder="BENOVERTECH"
+                  placeholder="Benover Tech"
                   className={`${inputClass} mt-2.5`}
                 />
               </div>
@@ -246,7 +246,7 @@ export function Studio() {
                   value={audience}
                   onChange={(e) => setAudience(e.target.value)}
                   maxLength={INPUT_LIMITS.audience}
-                  placeholder="Lagos small business owners"
+                  placeholder="People upgrading their everyday tech"
                   className={`${inputClass} mt-2.5`}
                 />
               </div>
@@ -259,7 +259,7 @@ export function Studio() {
                   value={cta}
                   onChange={(e) => setCta(e.target.value)}
                   maxLength={INPUT_LIMITS.cta}
-                  placeholder="Send us a WhatsApp message today."
+                  placeholder="Message Benover Tech for current availability."
                   className={`${inputClass} mt-2.5`}
                 />
               </div>

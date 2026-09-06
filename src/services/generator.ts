@@ -54,12 +54,10 @@ function buildHashtags(input: GenerationInput, profile: NicheProfile): string[] 
     out.push(clean);
   };
 
-  const business = input.business?.trim() || "BENOVERTECH";
+  const business = input.business?.trim() || "Benover Tech";
   const audience = input.audience?.trim() || "";
   const context = `${business} ${audience}`;
-  const isNigeriaContext =
-    (!input.business?.trim() && !input.audience?.trim()) ||
-    /lagos|nigeria|naija|nigerian/i.test(context);
+  const isNigeriaContext = /lagos|nigeria|naija|nigerian/i.test(context);
   const locationTags = [
     ["lagos", "#Lagos"],
     ["nigeria", "#Nigeria"],
@@ -70,7 +68,7 @@ function buildHashtags(input: GenerationInput, profile: NicheProfile): string[] 
   ] as const;
 
   push(toHashtag(profile.key) ?? "");
-  push(business === "BENOVERTECH" ? "#BenoverTech" : toHashtag(business) ?? "");
+  push(business.toLowerCase() === "benover tech" ? "#BenoverTech" : toHashtag(business) ?? "");
   PLATFORM_FILLER_TAGS[input.platform]?.forEach(push);
   profile.tags
     .filter(
@@ -217,7 +215,7 @@ function bodyFor(
   switch (t) {
     case "educational":
       return [
-        `Before you spend a naira on ${profile.subject}, check ${profile.detail}.`,
+        `Before you spend money on ${profile.subject}, check ${profile.detail}.`,
         `Most disappointments are not bad luck. They are skipped checks.`,
         `At ${business}, ${profile.proof}.`,
       ];
@@ -290,11 +288,11 @@ function buildImagePrompt(
   return [
     `Premium editorial product photograph: ${profile.imageSubject}.`,
     `Brand context: ${business}. Target audience: ${audience}.`,
-    `Deep matte black background with a reflective luxury surface, soft golden-orange rim light (#F59E0B) from the left and a subtle purple accent glow (#6D28D9) from the right.`,
+    `Clean graphite background with a cool blue key light and a restrained teal accent, premium but approachable retail styling.`,
     `Shot on 85mm lens, f/2.0, shallow depth of field, crisp micro-detail on edges and texture, gentle reflection under the subject.`,
     `Composition: subject slightly off-centre with generous negative space at the top for a headline overlay.`,
-    `Mood: minimal luxury, high-end tech advertising, Apple-style restraint.`,
-    `Colour grade: rich blacks, warm gold highlights, no clipping.`,
+    `Mood: modern, trustworthy gadget retail with premium product detail.`,
+    `Colour grade: clean neutrals, blue highlights, soft teal accents, no clipping.`,
     `Aspect ratio ${input.platform === "tiktok" ? "9:16 vertical" : input.platform === "instagram" ? "4:5 portrait" : "1:1 square"}. No text, no watermark, no logos.`,
   ].join(" ");
 }
@@ -311,7 +309,7 @@ function buildVideoPrompt(
   return [
     `AI VIDEO PROMPT — works in Veo, Kling, Hailuo, Sora, Runway and InVideo AI`,
     ``,
-    `FORMAT: ${ratio}, 15–25 seconds, cinematic, dark premium aesthetic with golden-orange and purple accent light.`,
+    `FORMAT: ${ratio}, 15–25 seconds, polished premium gadget retail aesthetic with clean graphite, blue and teal accents.`,
     `BRAND CONTEXT: ${business}. TARGET AUDIENCE: ${audience}.`,
     ``,
     `OPENING HOOK (0–3s): ${hook}`,
@@ -322,7 +320,7 @@ function buildVideoPrompt(
     ``,
     `SCENE 3 (13–20s): The customer smiling as they receive the finished item; shop interior slightly out of focus behind. Camera: gentle push-in, ending on a static hero frame. Text overlay: "${profile.proof}."`,
     ``,
-    `ENDING CTA (20–25s): Black frame, brand mark centred, golden glow rising from below. Text overlay: "${cta}"`,
+    `ENDING CTA (20–25s): Clean brand frame with the Benover Tech mark and a restrained blue-teal accent. Text overlay: "${cta}"`,
     ``,
     `AUDIO DIRECTION: minimal deep-bass bed, one subtle riser into Scene 3, no voiceover required.`,
   ].join("\n");
@@ -334,25 +332,25 @@ export function generateContent(input: GenerationInput): GeneratedContent {
   const niche = resolveNiche(input);
   const profile = profileFor(niche);
   const business = input.business?.trim() || "BENOVERTECH";
-  const audience = input.audience?.trim() || `${niche.toLowerCase()} buyers in Lagos`;
+  const audience = input.audience?.trim() || `${niche.toLowerCase()} buyers`;
   const cta = input.cta?.trim() || DEFAULT_CTA;
 
   const isPhoneSeed =
-    profile.key === "Phones" && (input.contentType === "educational" || input.contentType === "tips");
+    profile.key === "iPhone" && (input.contentType === "educational" || input.contentType === "tips");
 
   const title = isPhoneSeed
-    ? "3 Mistakes People Make Before Buying a Used iPhone"
+    ? "3 Smart Checks Before Buying an iPhone"
     : TITLE_TEMPLATES[input.contentType](profile);
 
   const hook = isPhoneSeed
-    ? "Most people lose money on a used iPhone in the first five minutes — before they even check the battery."
+    ? "Before you choose an iPhone, check the details that affect how it will perform every day."
     : HOOK_TEMPLATES[input.contentType](profile);
 
   const body = isPhoneSeed
     ? [
-        "Mistake 1: Trusting the seller's word on battery health. Open Settings and look at the number yourself. Anything under 85% is a hidden cost.",
-        "Mistake 2: Not checking iCloud lock status. A locked iPhone is an expensive paperweight, no matter how clean the body looks.",
-        "Mistake 3: Ignoring the panel. A replaced screen is fine — a bad replacement is not. Check the touch response at the edges and the true black.",
+        "Check 1: Battery health. Open Settings and review the number yourself so you understand the device's likely daily performance.",
+        "Check 2: iCloud status. Confirm the phone is ready for its next owner before you commit.",
+        "Check 3: The display and cameras. Test touch response, brightness, focus and image quality across the device.",
         `At ${business}, we test battery health, storage, iCloud status and panel originality in front of you, so ${audience} can buy with confidence.`,
       ]
     : bodyFor(input, profile, business, audience);
