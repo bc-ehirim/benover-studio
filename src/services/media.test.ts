@@ -64,8 +64,9 @@ describe("media utilities", () => {
     );
 
     const request = fetchGeneratedImage("https://example.test/image");
+    const assertion = expect(request).rejects.toThrow("timed out");
     await vi.advanceTimersByTimeAsync(90_000);
-    await expect(request).rejects.toThrow("timed out");
+    await assertion;
   });
 
   it("releases object URLs safely", () => {

@@ -41,6 +41,9 @@ export function ResultCard({ result }: ResultCardProps) {
             <span className="rounded-full border border-border px-2.5 py-1">
               {result.tone.replace(/-/g, " ")}
             </span>
+            <span className="rounded-full border border-accent/40 bg-accent/10 px-2.5 py-1 text-accent-foreground">
+              Draft for review
+            </span>
           </div>
           <h3 className="mt-3 text-xl font-semibold leading-snug sm:text-2xl">{result.title}</h3>
           <p className="mt-2 text-sm italic text-primary/90">{result.hook}</p>
@@ -129,8 +132,9 @@ export function ResultCard({ result }: ResultCardProps) {
       >
         <Info className="mt-0.5 h-4 w-4 shrink-0 text-muted-foreground" />
         <p className="text-sm text-muted-foreground">
-          <span className="font-medium text-foreground">Media creation is now in the studio.</span>{" "}
-          Download the generated image or browser-assembled video, then post manually.
+          <span className="font-medium text-foreground">Review before publishing.</span> Generated
+          claims and product details are drafts. Media creation is available in the studio; download
+          the result, then post manually.
         </p>
       </motion.div>
     </motion.div>
