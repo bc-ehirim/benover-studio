@@ -58,7 +58,10 @@ function buildHashtags(input: GenerationInput, profile: NicheProfile): string[] 
   push(business === "BENOVERTECH" ? "#BenoverTech" : toHashtag(business) ?? "");
   PLATFORM_FILLER_TAGS[input.platform]?.forEach(push);
   profile.tags
-    .filter((tag) => isNigeriaContext || !/(nigeria|lagos|naija|nigerian)/i.test(tag))
+    .filter(
+      (tag) =>
+        isNigeriaContext || !/(nigeria|lagos|naija|nigerian|lekki|abuja|ukused)/i.test(tag),
+    )
     .forEach(push);
   if (profile.key === "Phones" && isNigeriaContext) push("#iPhoneNigeria");
   locationTags.forEach(([name, tag]) => {
@@ -70,11 +73,14 @@ function buildHashtags(input: GenerationInput, profile: NicheProfile): string[] 
     "#TrustedSeller",
     "#GrowYourBusiness",
     "#DailyContent",
-    "#SocialMediaNigeria",
+    "#SocialMediaTips",
     "#SmallBusiness",
     "#OnlineBusiness",
   ];
-  if (isNigeriaContext) filler.splice(1, 0, "#NigerianBusiness", "#BuyNigerian");
+  if (isNigeriaContext) {
+    filler.splice(1, 0, "#NigerianBusiness", "#BuyNigerian");
+    filler.push("#SocialMediaNigeria");
+  }
   let i = 0;
   while (out.length < 15 && i < filler.length) push(filler[i++]!);
 
