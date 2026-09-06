@@ -288,15 +288,16 @@ function buildImagePrompt(
   business: string,
   audience: string,
 ): string {
+  const ratio = input.platform === "tiktok" ? "9:16 vertical" : input.platform === "instagram" ? "4:5 portrait" : "1:1 square";
   return [
-    `Premium editorial product photograph: ${profile.imageSubject}.`,
-    `Brand context: ${business}. Target audience: ${audience}. Product details: ${productDetails(input)}.`,
-    `Clean graphite background with a cool blue key light and a restrained teal accent, premium but approachable retail styling.`,
-    `Shot on 85mm lens, f/2.0, shallow depth of field, crisp micro-detail on edges and texture, gentle reflection under the subject.`,
-    `Composition: subject slightly off-centre with generous negative space at the top for a headline overlay.`,
-    `Mood: modern, trustworthy gadget retail with premium product detail.`,
-    `Colour grade: clean neutrals, blue highlights, soft teal accents, no clipping.`,
-    `Aspect ratio ${input.platform === "tiktok" ? "9:16 vertical" : input.platform === "instagram" ? "4:5 portrait" : "1:1 square"}. No text, no watermark, no logos.`,
+    `SUBJECT: one ${profile.key} product, specifically ${profile.imageSubject}.`,
+    `PRODUCT FACTS: ${productDetails(input)}. Preserve the product category and physical form exactly.`,
+    `SCENE: realistic social-media lifestyle photo showing the single product being used in a clean ${audience} setting.`,
+    `COMPOSITION: product is the unmistakable hero, close enough to inspect, with natural context and clear negative space for optional overlay.`,
+    `CAMERA: premium commercial photography, 50mm lens, natural perspective, crisp product detail, realistic materials, balanced exposure.`,
+    `STYLE: polished Benover Tech retail photography, clean graphite surfaces, cool blue key light, restrained teal accents, trustworthy and modern.`,
+    `FORMAT: ${ratio}. No rendered words or logos.`,
+    `AVOID: extra phones or gadgets, hands covering the product, distorted screens, duplicated objects, fake brand marks, unreadable text, watermark, collage, illustration, cartoon, low resolution.`,
   ].join(" ");
 }
 

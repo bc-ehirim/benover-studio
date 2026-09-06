@@ -2,7 +2,12 @@ import { useEffect, useRef, useState } from "react";
 import { Download, Image as ImageIcon, Loader2, Video } from "lucide-react";
 import { toast } from "sonner";
 import type { GeneratedContent } from "@/types";
-import { createImageGenerationUrl, fetchGeneratedImage, type GeneratedImageAsset } from "@/services/media";
+import {
+  createImageGenerationUrl,
+  fetchGeneratedImage,
+  releaseObjectUrl,
+  type GeneratedImageAsset,
+} from "@/services/media";
 import { assembleVideo } from "@/utils/video";
 import { AnimatedButton } from "./AnimatedButton";
 
@@ -24,8 +29,8 @@ export function MediaGenerator({ result }: MediaGeneratorProps) {
 
   useEffect(() => {
     imageAbort.current?.abort();
-    if (imageUrlRef.current) URL.revokeObjectURL(imageUrlRef.current);
-    if (videoUrlRef.current) URL.revokeObjectURL(videoUrlRef.current);
+    releaseObjectUrl(imageUrlRef.current);
+    releaseObjectUrl(videoUrlRef.current);
     setImageUrl(null);
     setImageExtension("jpg");
     setVideoUrl(null);
@@ -37,8 +42,8 @@ export function MediaGenerator({ result }: MediaGeneratorProps) {
   useEffect(() => {
     return () => {
       imageAbort.current?.abort();
-      if (imageUrlRef.current) URL.revokeObjectURL(imageUrlRef.current);
-      if (videoUrlRef.current) URL.revokeObjectURL(videoUrlRef.current);
+      releaseObjectUrl(imageUrlRef.current);
+      releaseObjectUrl(videoUrlRef.current);
     };
   }, []);
 
@@ -60,7 +65,7 @@ export function MediaGenerator({ result }: MediaGeneratorProps) {
     imageAbort.current?.abort();
     imageAbort.current = new AbortController();
     const asset = await fetchGeneratedImage(url, imageAbort.current.signal);
-    if (imageUrlRef.current) URL.revokeObjectURL(imageUrlRef.current);
+    releaseObjectUrl(imageUrlRef.current);
     imageUrlRef.current = asset.url;
     setImageExtension(asset.extension);
     setImageUrl(asset.url);
@@ -101,7 +106,7 @@ export function MediaGenerator({ result }: MediaGeneratorProps) {
         cta: result.cta,
         vertical: result.platform === "tiktok",
       });
-      if (videoUrlRef.current) URL.revokeObjectURL(videoUrlRef.current);
+      releaseObjectUrl(videoUrlRef.current);
       const nextVideoUrl = URL.createObjectURL(blob);
       videoUrlRef.current = nextVideoUrl;
       setVideoUrl(nextVideoUrl);

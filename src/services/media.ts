@@ -34,6 +34,10 @@ export function imageExtension(contentType: string): GeneratedImageAsset["extens
   return "jpg";
 }
 
+export function releaseObjectUrl(url: string | null): void {
+  if (url) URL.revokeObjectURL(url);
+}
+
 export async function fetchGeneratedImage(
   url: string,
   signal?: AbortSignal,
@@ -46,6 +50,9 @@ export async function fetchGeneratedImage(
   try {
     const response = await fetch(url, { signal: controller.signal, mode: "cors" });
     if (!response.ok) {
+      if (response.status === 429) {
+        throw new Error("The free image service is busy right now. Please retry in a moment.");
+      }
       throw new Error(`The image service returned HTTP ${response.status}.`);
     }
     const contentType = response.headers.get("content-type") ?? "";
