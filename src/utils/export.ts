@@ -48,14 +48,22 @@ export function resultToText(result: GeneratedContent): string {
 }
 
 /** Trigger a client-side .txt download. No network involved. */
-export function downloadTextFile(filename: string, contents: string): void {
-  const blob = new Blob([contents], { type: "text/plain;charset=utf-8" });
-  const url = URL.createObjectURL(blob);
-  const link = document.createElement("a");
-  link.href = url;
-  link.download = filename;
-  document.body.appendChild(link);
-  link.click();
-  document.body.removeChild(link);
-  setTimeout(() => URL.revokeObjectURL(url), 1000);
+export function downloadTextFile(filename: string, contents: string): boolean {
+  try {
+    if (typeof document === "undefined" || typeof URL.createObjectURL !== "function") {
+      return false;
+    }
+    const blob = new Blob([contents], { type: "text/plain;charset=utf-8" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = filename;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+    return true;
+  } catch {
+    return false;
+  }
 }

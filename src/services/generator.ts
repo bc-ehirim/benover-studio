@@ -1,5 +1,5 @@
 import type { GeneratedContent, GenerationInput, ToneId } from "@/types";
-import { DEFAULT_CTA } from "./constants";
+import { DEFAULT_CTA, INPUT_LIMITS } from "./constants";
 import { resolveNiche } from "./prompt-engine";
 import {
   HOOK_TEMPLATES,
@@ -26,6 +26,21 @@ function toHashtag(value: string): string | null {
   const words = value.match(/[A-Za-z0-9]+/g) ?? [];
   if (words.length === 0) return null;
   return `#${words.map((word) => word[0]!.toUpperCase() + word.slice(1).toLowerCase()).join("")}`;
+}
+
+function limitInput(value: string | undefined, maxLength: number): string | undefined {
+  const trimmed = value?.trim();
+  return trimmed ? trimmed.slice(0, maxLength) : undefined;
+}
+
+function normalizeInput(input: GenerationInput): GenerationInput {
+  return {
+    ...input,
+    customNiche: limitInput(input.customNiche, INPUT_LIMITS.customNiche),
+    business: limitInput(input.business, INPUT_LIMITS.business),
+    audience: limitInput(input.audience, INPUT_LIMITS.audience),
+    cta: limitInput(input.cta, INPUT_LIMITS.cta),
+  };
 }
 
 function buildHashtags(input: GenerationInput, profile: NicheProfile): string[] {
@@ -266,9 +281,15 @@ function bodyFor(
   }
 }
 
-function buildImagePrompt(profile: NicheProfile, input: GenerationInput): string {
+function buildImagePrompt(
+  profile: NicheProfile,
+  input: GenerationInput,
+  business: string,
+  audience: string,
+): string {
   return [
     `Premium editorial product photograph: ${profile.imageSubject}.`,
+    `Brand context: ${business}. Target audience: ${audience}.`,
     `Deep matte black background with a reflective luxury surface, soft golden-orange rim light (#F59E0B) from the left and a subtle purple accent glow (#6D28D9) from the right.`,
     `Shot on 85mm lens, f/2.0, shallow depth of field, crisp micro-detail on edges and texture, gentle reflection under the subject.`,
     `Composition: subject slightly off-centre with generous negative space at the top for a headline overlay.`,
@@ -283,12 +304,15 @@ function buildVideoPrompt(
   input: GenerationInput,
   hook: string,
   cta: string,
+  business: string,
+  audience: string,
 ): string {
   const ratio = input.platform === "facebook" ? "1:1 or 4:5" : "9:16 vertical";
   return [
     `AI VIDEO PROMPT — works in Veo, Kling, Hailuo, Sora, Runway and InVideo AI`,
     ``,
     `FORMAT: ${ratio}, 15–25 seconds, cinematic, dark premium aesthetic with golden-orange and purple accent light.`,
+    `BRAND CONTEXT: ${business}. TARGET AUDIENCE: ${audience}.`,
     ``,
     `OPENING HOOK (0–3s): ${hook}`,
     ``,
@@ -306,6 +330,7 @@ function buildVideoPrompt(
 
 /** Deterministic, fully local generation. No network calls. */
 export function generateContent(input: GenerationInput): GeneratedContent {
+  input = normalizeInput(input);
   const niche = resolveNiche(input);
   const profile = profileFor(niche);
   const business = input.business?.trim() || "BENOVERTECH";
@@ -356,8 +381,8 @@ export function generateContent(input: GenerationInput): GeneratedContent {
     caption,
     hashtags: buildHashtags(input, profile),
     cta,
-    imagePrompt: buildImagePrompt(profile, input),
-    videoPrompt: buildVideoPrompt(profile, input, styledHook, cta),
+    imagePrompt: buildImagePrompt(profile, input, business, audience),
+    videoPrompt: buildVideoPrompt(profile, input, styledHook, cta, business, audience),
     platform: input.platform,
     contentType: input.contentType,
     tone: input.tone,

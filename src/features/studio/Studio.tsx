@@ -10,6 +10,7 @@ import { ToneSelector } from "@/components/ToneSelector";
 import { CalendarStrip } from "./CalendarStrip";
 import {
   CONTENT_TYPES,
+  INPUT_LIMITS,
   NICHES,
   PLATFORMS,
   PRESET_PACK,
@@ -202,6 +203,7 @@ export function Studio() {
                   id="customNiche"
                   value={customNiche}
                   onChange={(e) => setCustomNiche(e.target.value)}
+                  maxLength={INPUT_LIMITS.customNiche}
                   placeholder={
                     niche === "custom" ? "e.g. Solar installation" : "Select Custom niche… first"
                   }
@@ -230,6 +232,7 @@ export function Studio() {
                   id="business"
                   value={business}
                   onChange={(e) => setBusiness(e.target.value)}
+                  maxLength={INPUT_LIMITS.business}
                   placeholder="BENOVERTECH"
                   className={`${inputClass} mt-2.5`}
                 />
@@ -242,6 +245,7 @@ export function Studio() {
                   id="audience"
                   value={audience}
                   onChange={(e) => setAudience(e.target.value)}
+                  maxLength={INPUT_LIMITS.audience}
                   placeholder="Lagos small business owners"
                   className={`${inputClass} mt-2.5`}
                 />
@@ -254,6 +258,7 @@ export function Studio() {
                   id="cta"
                   value={cta}
                   onChange={(e) => setCta(e.target.value)}
+                  maxLength={INPUT_LIMITS.cta}
                   placeholder="Send us a WhatsApp message today."
                   className={`${inputClass} mt-2.5`}
                 />

@@ -137,3 +137,10 @@ export function dayPlan(dayIndex: number): CalendarDay {
 
 export const DEFAULT_CTA = "Send us a WhatsApp message today.";
 export const BRAND = "BENOVERTECH";
+
+export const INPUT_LIMITS = {
+  business: 80,
+  audience: 120,
+  cta: 160,
+  customNiche: 60,
+} as const;

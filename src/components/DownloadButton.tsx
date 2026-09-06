@@ -22,8 +22,14 @@ export function DownloadButton({
       size="sm"
       className={className}
       onClick={() => {
-        downloadTextFile(filename, contents);
-        toast.success("Download started", { description: filename });
+        const ok = downloadTextFile(filename, contents);
+        if (ok) {
+          toast.success("Download started", { description: filename });
+        } else {
+          toast.error("Download unavailable", {
+            description: "Your browser could not create the text file.",
+          });
+        }
       }}
     >
       <Download className="h-4 w-4" />
