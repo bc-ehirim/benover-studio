@@ -4,7 +4,6 @@ import { Hero } from "@/components/Hero";
 import { Nav } from "@/components/Nav";
 import { Studio } from "@/features/studio/Studio";
 import { Workflow } from "@/features/sections/Workflow";
-import { ComingSoon } from "@/features/sections/ComingSoon";
 import { Footer } from "@/features/sections/Footer";
 
 export const Route = createFileRoute("/")({
@@ -23,7 +22,6 @@ function Index() {
       <Hero />
       <Studio />
       <Workflow />
-      <ComingSoon />
       <Footer />
     </motion.main>
   );
