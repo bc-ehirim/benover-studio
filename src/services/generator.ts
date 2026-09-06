@@ -18,6 +18,12 @@ const PLATFORM_NAME = {
   tiktok: "TikTok",
 } as const;
 
+const PLATFORM_FILLER_TAGS: Record<GenerationInput["platform"], string[]> = {
+  facebook: ["#FacebookMarketplace", "#LagosDeals", "#CommunityBusiness", "#CustomerService"],
+  instagram: ["#InstagramNigeria", "#ExplorePage", "#VisualMarketing", "#SmallBusiness"],
+  tiktok: ["#TikTokNigeria", "#FYPNigeria", "#TikTokMadeMeBuyIt", "#LearnOnTikTok"],
+};
+
 function buildHashtags(input: GenerationInput, profile: NicheProfile): string[] {
   const seen = new Set<string>();
   const out: string[] = [];
@@ -29,17 +35,33 @@ function buildHashtags(input: GenerationInput, profile: NicheProfile): string[] 
     out.push(clean);
   };
 
-  ["#LagosBusiness", "#BenoverTech"].forEach(push);
+  const platformTags = PLATFORM_FILLER_TAGS[input.platform] ?? [];
+  const platformTagsFromTemplates = PLATFORM_TAGS[input.platform] ?? [];
+
+  if (input.platform === "tiktok") {
+    platformTags.forEach(push);
+    push("#LagosBusiness");
+    profile.tags.slice(0, 5).forEach(push);
+    SHARED_TAGS.slice(0, 4).forEach(push);
+  } else if (input.platform === "instagram") {
+    profile.tags.forEach(push);
+    platformTags.forEach(push);
+    push("#LagosBusiness");
+    SHARED_TAGS.forEach(push);
+  } else {
+    ["#LagosBusiness", "#BenoverTech"].forEach(push);
+    profile.tags.forEach(push);
+    platformTags.forEach(push);
+    SHARED_TAGS.forEach(push);
+  }
+
   if (profile.key === "Phones") push("#iPhoneNigeria");
-  profile.tags.forEach(push);
-  (PLATFORM_TAGS[input.platform] ?? []).forEach(push);
-  SHARED_TAGS.forEach(push);
+  platformTagsFromTemplates.forEach(push);
 
   const filler = [
     "#ContentCreator",
     "#NigerianBusiness",
     "#BuyNigerian",
-    "#CustomerService",
     "#TrustedSeller",
     "#GrowYourBusiness",
     "#DailyContent",
@@ -49,6 +71,55 @@ function buildHashtags(input: GenerationInput, profile: NicheProfile): string[] 
   while (out.length < 15 && i < filler.length) push(filler[i++]!);
 
   return out.slice(0, 15);
+}
+
+function formatCaption(
+  input: GenerationInput,
+  body: string[],
+  opener: string,
+  hook: string,
+  closer: string,
+  cta: string,
+  business: string,
+  niche: string,
+): string {
+  const location = `📍 ${business} · ${niche}`;
+
+  if (input.platform === "tiktok") {
+    const shortBody = body.slice(0, 3).map((line) => line.replace(/^\d+\.\s*/, ""));
+    return [
+      hook,
+      "",
+      ...shortBody,
+      "",
+      `${cta}`,
+      location,
+    ].join("\n");
+  }
+
+  if (input.platform === "instagram") {
+    return [
+      `${opener} ${hook}`,
+      "",
+      body.join("\n\n"),
+      "",
+      `${closer}`,
+      `\n${cta}`,
+      "",
+      location,
+    ].join("\n");
+  }
+
+  return [
+    `${opener} ${hook}`,
+    "",
+    body.join("\n"),
+    "",
+    closer,
+    cta,
+    "",
+    `${location} · ${PLATFORM_NAME[input.platform]}`,
+  ].join("\n");
 }
 
 function bodyFor(
@@ -194,16 +265,7 @@ export function generateContent(input: GenerationInput): GeneratedContent {
   const opener = TONE_OPENERS[input.tone];
   const closer = TONE_CLOSERS[input.tone];
 
-  const caption = [
-    `${opener} ${hook}`,
-    "",
-    body.join("\n"),
-    "",
-    `${closer}`,
-    `${cta}`,
-    "",
-    `📍 ${business} — ${PLATFORM_NAME[input.platform]} · ${niche}`,
-  ].join("\n");
+  const caption = formatCaption(input, body, opener, hook, closer, cta, business, niche);
 
   return {
     id: `${input.platform}-${input.contentType}-${niche}-${input.tone}`.toLowerCase(),
