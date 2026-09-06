@@ -18,6 +18,7 @@ export function ResultCard({ result }: ResultCardProps) {
   const charCount = result.caption.length;
   const max = platform?.maxChars ?? 2200;
   const fileText = resultToText(result);
+  const captionWithHashtags = `${result.caption}\n\n${result.hashtags.join(" ")}`;
 
   return (
     <motion.div
@@ -91,7 +92,11 @@ export function ResultCard({ result }: ResultCardProps) {
         </div>
 
         <div className="flex flex-wrap gap-2 border-t border-border bg-surface/30 px-5 py-4">
-          <CopyButton label="Copy Caption" value={result.caption} variant="primary" />
+          <CopyButton
+            label="Copy Caption + Hashtags"
+            value={captionWithHashtags}
+            variant="primary"
+          />
           <CopyButton label="Copy Hashtags" value={result.hashtags.join(" ")} />
           <CopyButton label="Copy Image Prompt" value={result.imagePrompt} />
           <CopyButton label="Copy Video Prompt" value={result.videoPrompt} />
