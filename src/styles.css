@@ -6,7 +6,7 @@
 
 /*
  * BENOVER Content Studio design system.
- * Dark by default. Black / golden orange / purple / white.
+ * Light by default. Slate / blue / teal / white.
  * All color tokens use oklch.
  */
 
@@ -57,47 +57,47 @@
 :root {
   --radius: 1rem;
 
-  --background: oklch(0.145 0.005 285);
-  --foreground: oklch(0.985 0 0);
+  --background: oklch(0.975 0.006 255);
+  --foreground: oklch(0.20 0.025 255);
 
-  --surface: oklch(0.185 0.006 285);
-  --surface-raised: oklch(0.225 0.008 285);
+  --surface: oklch(0.995 0.002 255);
+  --surface-raised: oklch(1 0 0);
 
-  --card: oklch(0.185 0.006 285);
-  --card-foreground: oklch(0.985 0 0);
-  --popover: oklch(0.185 0.006 285);
-  --popover-foreground: oklch(0.985 0 0);
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.20 0.025 255);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.20 0.025 255);
 
-  /* golden orange #F59E0B */
-  --primary: oklch(0.769 0.166 70.3);
-  --primary-foreground: oklch(0.16 0.01 60);
-  --primary-glow: oklch(0.86 0.13 85);
+  /* professional blue */
+  --primary: oklch(0.54 0.19 255);
+  --primary-foreground: oklch(1 0 0);
+  --primary-glow: oklch(0.68 0.14 230);
 
-  /* purple #6D28D9 */
-  --accent: oklch(0.45 0.24 295);
-  --accent-foreground: oklch(0.985 0 0);
-  --accent-glow: oklch(0.62 0.22 300);
+  /* restrained teal accent */
+  --accent: oklch(0.58 0.12 185);
+  --accent-foreground: oklch(1 0 0);
+  --accent-glow: oklch(0.7 0.1 185);
 
-  --secondary: oklch(0.245 0.008 285);
-  --secondary-foreground: oklch(0.985 0 0);
-  --muted: oklch(0.235 0.008 285);
-  --muted-foreground: oklch(0.68 0.01 285);
+  --secondary: oklch(0.93 0.012 255);
+  --secondary-foreground: oklch(0.30 0.03 255);
+  --muted: oklch(0.945 0.009 255);
+  --muted-foreground: oklch(0.50 0.025 255);
 
-  --destructive: oklch(0.62 0.21 25);
-  --destructive-foreground: oklch(0.985 0 0);
+  --destructive: oklch(0.58 0.2 25);
+  --destructive-foreground: oklch(1 0 0);
 
-  --border: oklch(1 0 0 / 10%);
-  --input: oklch(1 0 0 / 14%);
-  --ring: oklch(0.769 0.166 70.3);
+  --border: oklch(0.88 0.015 255);
+  --input: oklch(0.84 0.02 255);
+  --ring: oklch(0.54 0.19 255);
 
-  --sidebar: oklch(0.165 0.006 285);
-  --sidebar-foreground: oklch(0.985 0 0);
-  --sidebar-primary: oklch(0.769 0.166 70.3);
-  --sidebar-primary-foreground: oklch(0.16 0.01 60);
-  --sidebar-accent: oklch(0.245 0.008 285);
-  --sidebar-accent-foreground: oklch(0.985 0 0);
-  --sidebar-border: oklch(1 0 0 / 10%);
-  --sidebar-ring: oklch(0.769 0.166 70.3);
+  --sidebar: oklch(0.965 0.008 255);
+  --sidebar-foreground: oklch(0.20 0.025 255);
+  --sidebar-primary: oklch(0.54 0.19 255);
+  --sidebar-primary-foreground: oklch(1 0 0);
+  --sidebar-accent: oklch(0.93 0.012 255);
+  --sidebar-accent-foreground: oklch(0.20 0.025 255);
+  --sidebar-border: oklch(0.88 0.015 255);
+  --sidebar-ring: oklch(0.54 0.19 255);
 
   --gradient-brand: linear-gradient(
     120deg,
@@ -110,11 +110,11 @@
     color-mix(in oklab, var(--surface-raised) 92%, transparent) 0%,
     color-mix(in oklab, var(--background) 88%, transparent) 100%
   );
-  --shadow-soft: 0 1px 0 0 color-mix(in oklab, white 6%, transparent) inset,
-    0 18px 40px -24px oklch(0 0 0 / 0.9);
+  --shadow-soft: 0 1px 0 0 oklch(1 0 0 / 80%) inset,
+    0 18px 40px -24px oklch(0.2 0.025 255 / 0.2);
   --shadow-glow: 0 0 0 1px color-mix(in oklab, var(--primary) 28%, transparent),
-    0 22px 60px -28px color-mix(in oklab, var(--primary) 60%, transparent);
-  --shadow-lift: 0 30px 70px -34px oklch(0 0 0 / 0.95);
+    0 22px 60px -28px color-mix(in oklab, var(--primary) 32%, transparent);
+  --shadow-lift: 0 30px 70px -34px oklch(0.2 0.025 255 / 0.28);
 }
 
 @layer base {
@@ -182,8 +182,8 @@
 
 @utility grid-bg {
   background-image:
-    linear-gradient(to right, color-mix(in oklab, white 5%, transparent) 1px, transparent 1px),
-    linear-gradient(to bottom, color-mix(in oklab, white 5%, transparent) 1px, transparent 1px);
+    linear-gradient(to right, color-mix(in oklab, var(--foreground) 5%, transparent) 1px, transparent 1px),
+    linear-gradient(to bottom, color-mix(in oklab, var(--foreground) 5%, transparent) 1px, transparent 1px);
   background-size: 64px 64px;
   mask-image: radial-gradient(ellipse 80% 60% at 50% 0%, black 10%, transparent 75%);
 }
