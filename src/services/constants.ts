@@ -132,7 +132,7 @@ export const WEEK_CALENDAR: CalendarDay[] = [
 ];
 
 export function dayPlan(dayIndex: number): CalendarDay {
-  return WEEK_CALENDAR.find((d) => d.index === dayIndex) ?? WEEK_CALENDAR[0];
+  return WEEK_CALENDAR.find((d) => d.index === dayIndex) ?? WEEK_CALENDAR[0]!;
 }
 
 export const DEFAULT_CTA = "Send us a WhatsApp message today.";
