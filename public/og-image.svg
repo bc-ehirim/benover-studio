@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
+  <defs>
+    <linearGradient id="background" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#f5f8fc"/>
+      <stop offset="1" stop-color="#dcecf0"/>
+    </linearGradient>
+    <linearGradient id="brand" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#3567d6"/>
+      <stop offset="1" stop-color="#28a7a1"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="630" fill="url(#background)"/>
+  <circle cx="1010" cy="90" r="210" fill="#3567d6" opacity=".12"/>
+  <circle cx="1110" cy="520" r="260" fill="#28a7a1" opacity=".12"/>
+  <rect x="78" y="76" width="86" height="86" rx="22" fill="url(#brand)"/>
+  <path d="M103 96h18c13 0 21 6 21 15 0 6-3 10-9 12 7 2 12 6 12 13 0 11-9 17-24 17h-18V96Zm14 12v12h5c5 0 7-2 7-6 0-4-2-6-7-6h-5Zm0 24v14h6c6 0 9-3 9-7 0-5-3-7-9-7h-6Z" fill="#fff"/>
+  <text x="78" y="275" fill="#1f2d43" font-family="Arial, Helvetica, sans-serif" font-size="62" font-weight="700">BENOVER Content Studio</text>
+  <text x="82" y="345" fill="#3567d6" font-family="Arial, Helvetica, sans-serif" font-size="38" font-weight="700">Never run out of content again.</text>
+  <text x="82" y="410" fill="#52647d" font-family="Arial, Helvetica, sans-serif" font-size="25">Platform-ready captions, hashtags, image prompts and video prompts.</text>
+  <rect x="82" y="480" width="290" height="54" rx="27" fill="#3567d6"/>
+  <text x="122" y="516" fill="#fff" font-family="Arial, Helvetica, sans-serif" font-size="22" font-weight="700">Offline. Local. Ready.</text>
+</svg>
