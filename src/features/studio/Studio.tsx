@@ -202,8 +202,11 @@ export function Studio() {
                   id="customNiche"
                   value={customNiche}
                   onChange={(e) => setCustomNiche(e.target.value)}
-                  placeholder="e.g. Solar installation"
-                  className={`${inputClass} mt-3`}
+                  placeholder={
+                    niche === "custom" ? "e.g. Solar installation" : "Select Custom niche… first"
+                  }
+                  disabled={niche !== "custom"}
+                  className={`${inputClass} mt-3 disabled:cursor-not-allowed disabled:opacity-50`}
                 />
                 <p className="mt-2 text-[11px] text-muted-foreground">
                   Used when “Custom niche…” is selected.

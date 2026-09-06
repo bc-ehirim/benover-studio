@@ -3,8 +3,6 @@ import { DEFAULT_CTA } from "./constants";
 import { resolveNiche } from "./prompt-engine";
 import {
   HOOK_TEMPLATES,
-  PLATFORM_TAGS,
-  SHARED_TAGS,
   TITLE_TEMPLATES,
   TONE_CLOSERS,
   TONE_OPENERS,
@@ -19,10 +17,16 @@ const PLATFORM_NAME = {
 } as const;
 
 const PLATFORM_FILLER_TAGS: Record<GenerationInput["platform"], string[]> = {
-  facebook: ["#FacebookMarketplace", "#LagosDeals", "#CommunityBusiness", "#CustomerService"],
-  instagram: ["#InstagramNigeria", "#ExplorePage", "#VisualMarketing", "#SmallBusiness"],
-  tiktok: ["#TikTokNigeria", "#FYPNigeria", "#TikTokMadeMeBuyIt", "#LearnOnTikTok"],
+  facebook: ["#FacebookMarketplace", "#CommunityBusiness", "#CustomerService", "#LocalBusiness"],
+  instagram: ["#ExplorePage", "#VisualMarketing", "#SmallBusiness", "#Reels"],
+  tiktok: ["#TikTokMadeMeBuyIt", "#LearnOnTikTok", "#ForYou", "#ShortFormVideo"],
 };
+
+function toHashtag(value: string): string | null {
+  const words = value.match(/[A-Za-z0-9]+/g) ?? [];
+  if (words.length === 0) return null;
+  return `#${words.map((word) => word[0]!.toUpperCase() + word.slice(1).toLowerCase()).join("")}`;
+}
 
 function buildHashtags(input: GenerationInput, profile: NicheProfile): string[] {
   const seen = new Set<string>();
@@ -35,38 +39,42 @@ function buildHashtags(input: GenerationInput, profile: NicheProfile): string[] 
     out.push(clean);
   };
 
-  const platformTags = PLATFORM_FILLER_TAGS[input.platform] ?? [];
-  const platformTagsFromTemplates = PLATFORM_TAGS[input.platform] ?? [];
+  const business = input.business?.trim() || "BENOVERTECH";
+  const audience = input.audience?.trim() || "";
+  const context = `${business} ${audience}`;
+  const isNigeriaContext =
+    (!input.business?.trim() && !input.audience?.trim()) ||
+    /lagos|nigeria|naija|nigerian/i.test(context);
+  const locationTags = [
+    ["lagos", "#Lagos"],
+    ["nigeria", "#Nigeria"],
+    ["london", "#London"],
+    ["new york", "#NewYork"],
+    ["toronto", "#Toronto"],
+    ["dubai", "#Dubai"],
+  ] as const;
 
-  if (input.platform === "tiktok") {
-    platformTags.forEach(push);
-    push("#LagosBusiness");
-    profile.tags.slice(0, 5).forEach(push);
-    SHARED_TAGS.slice(0, 4).forEach(push);
-  } else if (input.platform === "instagram") {
-    profile.tags.forEach(push);
-    platformTags.forEach(push);
-    push("#LagosBusiness");
-    SHARED_TAGS.forEach(push);
-  } else {
-    ["#LagosBusiness", "#BenoverTech"].forEach(push);
-    profile.tags.forEach(push);
-    platformTags.forEach(push);
-    SHARED_TAGS.forEach(push);
-  }
-
-  if (profile.key === "Phones") push("#iPhoneNigeria");
-  platformTagsFromTemplates.forEach(push);
+  push(toHashtag(profile.key) ?? "");
+  push(business === "BENOVERTECH" ? "#BenoverTech" : toHashtag(business) ?? "");
+  PLATFORM_FILLER_TAGS[input.platform]?.forEach(push);
+  profile.tags
+    .filter((tag) => isNigeriaContext || !/(nigeria|lagos|naija|nigerian)/i.test(tag))
+    .forEach(push);
+  if (profile.key === "Phones" && isNigeriaContext) push("#iPhoneNigeria");
+  locationTags.forEach(([name, tag]) => {
+    if (new RegExp(name, "i").test(context)) push(tag);
+  });
 
   const filler = [
     "#ContentCreator",
-    "#NigerianBusiness",
-    "#BuyNigerian",
     "#TrustedSeller",
     "#GrowYourBusiness",
     "#DailyContent",
     "#SocialMediaNigeria",
+    "#SmallBusiness",
+    "#OnlineBusiness",
   ];
+  if (isNigeriaContext) filler.splice(1, 0, "#NigerianBusiness", "#BuyNigerian");
   let i = 0;
   while (out.length < 15 && i < filler.length) push(filler[i++]!);
 
@@ -314,7 +322,7 @@ export function generateContent(input: GenerationInput): GeneratedContent {
         "Mistake 1: Trusting the seller's word on battery health. Open Settings and look at the number yourself. Anything under 85% is a hidden cost.",
         "Mistake 2: Not checking iCloud lock status. A locked iPhone is an expensive paperweight, no matter how clean the body looks.",
         "Mistake 3: Ignoring the panel. A replaced screen is fine — a bad replacement is not. Check the touch response at the edges and the true black.",
-        "At BENOVERTECH, we test battery health, storage, iCloud status and panel originality in front of you before money changes hands.",
+        `At ${business}, we test battery health, storage, iCloud status and panel originality in front of you, so ${audience} can buy with confidence.`,
       ]
     : bodyFor(input, profile, business, audience);
 
