@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Download, Image as ImageIcon, Loader2, Video } from "lucide-react";
 import { toast } from "sonner";
 import type { GeneratedContent } from "@/types";
-import { createImageGenerationUrl, preloadImage } from "@/services/media";
+import { createImageGenerationUrl, fetchGeneratedImage } from "@/services/media";
 import { assembleVideo } from "@/utils/video";
 import { AnimatedButton } from "./AnimatedButton";
 
@@ -25,23 +25,25 @@ export function MediaGenerator({ result }: MediaGeneratorProps) {
 
   useEffect(() => {
     return () => {
+      if (imageUrl) URL.revokeObjectURL(imageUrl);
       if (videoUrl) URL.revokeObjectURL(videoUrl);
     };
-  }, [videoUrl]);
+  }, [imageUrl, videoUrl]);
 
-  async function ensureImage(): Promise<string> {
-    if (imageUrl) return imageUrl;
+  async function ensureImage(force = false): Promise<string> {
+    if (imageUrl && !force) return imageUrl;
     const url = createImageGenerationUrl(result.imagePrompt, result.platform);
-    await preloadImage(url);
-    setImageUrl(url);
-    return url;
+    const localUrl = await fetchGeneratedImage(url);
+    if (imageUrl) URL.revokeObjectURL(imageUrl);
+    setImageUrl(localUrl);
+    return localUrl;
   }
 
   async function handleGenerateImage() {
     setImageLoading(true);
     setError(null);
     try {
-      await ensureImage();
+      await ensureImage(true);
       toast.success("Image ready", { description: "Generated with the free image service." });
     } catch (caught) {
       const message = caught instanceof Error ? caught.message : "Image generation failed.";

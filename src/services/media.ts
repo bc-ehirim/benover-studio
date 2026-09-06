@@ -23,12 +23,28 @@ export function createImageGenerationUrl(prompt: string, platform: PlatformId): 
   return `${IMAGE_ENDPOINT}/${encodeURIComponent(prompt)}?${params.toString()}`;
 }
 
-export function preloadImage(url: string): Promise<void> {
-  return new Promise((resolve, reject) => {
-    const image = new Image();
-    image.crossOrigin = "anonymous";
-    image.onload = () => resolve();
-    image.onerror = () => reject(new Error("The free image service could not generate an image."));
-    image.src = url;
-  });
+export async function fetchGeneratedImage(url: string): Promise<string> {
+  const controller = new AbortController();
+  const timeout = window.setTimeout(() => controller.abort(), 90_000);
+
+  try {
+    const response = await fetch(url, { signal: controller.signal, mode: "cors" });
+    if (!response.ok) {
+      throw new Error(`The image service returned HTTP ${response.status}.`);
+    }
+    const contentType = response.headers.get("content-type") ?? "";
+    if (!contentType.startsWith("image/")) {
+      throw new Error("The image service returned an invalid response.");
+    }
+    return URL.createObjectURL(await response.blob());
+  } catch (error) {
+    if (error instanceof DOMException && error.name === "AbortError") {
+      throw new Error("Image generation timed out. Please try again.");
+    }
+    throw error instanceof Error
+      ? error
+      : new Error("The free image service could not generate an image.");
+  } finally {
+    window.clearTimeout(timeout);
+  }
 }
