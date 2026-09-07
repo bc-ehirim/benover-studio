@@ -157,7 +157,8 @@ export function Studio() {
 
   function handleGenerateToday() {
     setContentType(today.contentType);
-    run({ contentType: today.contentType });
+    setCampaign(undefined);
+    run({ contentType: today.contentType, campaign: undefined });
   }
 
   function handlePickDay(day: CalendarDay) {
@@ -173,11 +174,17 @@ export function Studio() {
 
   function handleResultChange(next: GeneratedContent) {
     setResult(next);
+  }
+
+  function handleSaveDraft(next: GeneratedContent) {
+    setResult(next);
     setHistory(saveContentHistory(next));
   }
 
   function handleShorten(next: GeneratedContent) {
-    const lines = next.caption.split("\n").filter(Boolean);
+    const lines = next.caption
+      .split("\n")
+      .filter((line) => line.trim() && line.trim() !== next.cta.trim());
     const caption = [...lines.slice(0, 5), "", next.cta].join("\n");
     handleResultChange({ ...next, caption });
   }
@@ -185,6 +192,11 @@ export function Studio() {
   function handleDelete(id: string) {
     setHistory(removeContentHistory(id));
     if (result?.id === id) setResult(null);
+  }
+
+  function handlePlatformChange(next: PlatformId) {
+    setPlatform(next);
+    if (next !== "whatsapp" && campaign === "whatsapp-sales") setCampaign(undefined);
   }
 
   function handleDuplicate(item: GeneratedContent) {
@@ -257,7 +269,7 @@ export function Studio() {
                     key={p.id}
                     platform={p}
                     selected={p.id === platform}
-                    onSelect={setPlatform}
+                    onSelect={handlePlatformChange}
                   />
                 ))}
               </div>
@@ -297,7 +309,11 @@ export function Studio() {
                       setCampaign(preset.campaign);
                       if (preset.name === "WhatsApp sales") setPlatform("whatsapp");
                     }}
-                    className="rounded-xl border border-border bg-surface/50 p-3 text-left transition-colors hover:border-primary/50 hover:bg-surface focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                    className={`rounded-xl border p-3 text-left transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring ${
+                      campaign === preset.campaign
+                        ? "border-primary/60 bg-primary/10"
+                        : "border-border bg-surface/50 hover:border-primary/50 hover:bg-surface"
+                    }`}
                   >
                     <span className="block text-xs font-semibold">{preset.name}</span>
                     <span className="mt-1 block text-[11px] leading-snug text-muted-foreground">
@@ -520,6 +536,7 @@ export function Studio() {
               result={result}
               onGenerateVariation={generateVariation}
               onChange={handleResultChange}
+              onSaveDraft={handleSaveDraft}
               onShorten={handleShorten}
               onDelete={handleDelete}
             />

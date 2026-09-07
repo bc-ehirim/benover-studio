@@ -3,6 +3,14 @@ import type { GeneratedContent } from "@/types";
 export const CONTENT_HISTORY_KEY = "benover-tech-content-history";
 const HISTORY_LIMIT = 12;
 
+function writeHistory(history: GeneratedContent[]): void {
+  try {
+    window.localStorage.setItem(CONTENT_HISTORY_KEY, JSON.stringify(history));
+  } catch {
+    // Local storage can be unavailable or full; the in-memory UI still works.
+  }
+}
+
 function isGeneratedContent(value: unknown): value is GeneratedContent {
   if (!value || typeof value !== "object") return false;
   const item = value as Partial<GeneratedContent>;
@@ -36,19 +44,20 @@ export function loadContentHistory(): GeneratedContent[] {
 }
 
 export function saveContentHistory(result: GeneratedContent): GeneratedContent[] {
-  const next = [result, ...loadContentHistory().filter((item) => item.id !== result.id)];
+  const next = [
+    result,
+    ...loadContentHistory().filter(
+      (item) => item.id !== result.id || item.createdAt !== result.createdAt,
+    ),
+  ];
   const limited = next.slice(0, HISTORY_LIMIT);
-  if (typeof window !== "undefined") {
-    window.localStorage.setItem(CONTENT_HISTORY_KEY, JSON.stringify(limited));
-  }
+  if (typeof window !== "undefined") writeHistory(limited);
   return limited;
 }
 
 export function removeContentHistory(id: string): GeneratedContent[] {
   const next = loadContentHistory().filter((item) => item.id !== id);
-  if (typeof window !== "undefined") {
-    window.localStorage.setItem(CONTENT_HISTORY_KEY, JSON.stringify(next));
-  }
+  if (typeof window !== "undefined") writeHistory(next);
   return next;
 }
 

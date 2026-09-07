@@ -96,6 +96,7 @@ export interface GeneratedContent {
   tone: ToneId;
   niche: string;
   campaign?: CampaignId;
+  reviewWarnings?: string[];
   createdAt: string;
 }
 

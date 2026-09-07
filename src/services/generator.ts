@@ -35,6 +35,20 @@ function limitInput(value: string | undefined, maxLength: number): string | unde
   return trimmed ? trimmed.slice(0, maxLength) : undefined;
 }
 
+function stableKey(input: GenerationInput, niche: string): string {
+  return [
+    input.platform,
+    input.contentType,
+    input.campaign ?? "standard",
+    niche,
+    input.tone,
+    input.variation ?? 0,
+  ]
+    .join("-")
+    .toLowerCase()
+    .replace(/[^a-z0-9-]+/g, "-");
+}
+
 function normalizeInput(input: GenerationInput): GenerationInput {
   return {
     ...input,
@@ -100,7 +114,8 @@ function buildHashtags(input: GenerationInput, profile: NicheProfile): string[] 
 
   push(toHashtag(profile.key) ?? "");
   push(business.toLowerCase() === "benover tech" ? "#BenoverTech" : (toHashtag(business) ?? ""));
-  PLATFORM_FILLER_TAGS[input.platform]?.forEach(push);
+  if (input.platform === "whatsapp") return out.slice(0, 3);
+  if (input.platform !== "whatsapp") PLATFORM_FILLER_TAGS[input.platform]?.forEach(push);
   profile.tags
     .filter(
       (tag) => isNigeriaContext || !/(nigeria|lagos|naija|nigerian|lekki|abuja|ukused)/i.test(tag),
@@ -124,8 +139,10 @@ function buildHashtags(input: GenerationInput, profile: NicheProfile): string[] 
     filler.splice(1, 0, "#NigerianBusiness", "#BuyNigerian");
     filler.push("#SocialMediaNigeria");
   }
-  let i = 0;
-  while (out.length < 15 && i < filler.length) push(filler[i++]!);
+  if (input.platform !== "whatsapp") {
+    let i = 0;
+    while (out.length < 15 && i < filler.length) push(filler[i++]!);
+  }
 
   return out.slice(0, 15);
 }
@@ -410,6 +427,17 @@ export function generateContent(input: GenerationInput): GeneratedContent {
     input.paymentOptions && `Payment options: ${input.paymentOptions}.`,
   ].filter(Boolean) as string[];
   const profileCta = input.whatsapp?.trim() ? `${cta} WhatsApp: ${input.whatsapp.trim()}.` : cta;
+  const isSalesCampaign =
+    input.contentType === "promotional" ||
+    input.platform === "whatsapp" ||
+    ["new-stock", "price-drop", "whatsapp-sales"].includes(input.campaign ?? "");
+  const reviewWarnings = [
+    isSalesCampaign && !input.model && "Add the product model before publishing.",
+    isSalesCampaign && !input.condition && "Confirm the product condition before publishing.",
+    isSalesCampaign && !input.price && "Add the current price before publishing.",
+    isSalesCampaign && !input.availability && "Confirm availability before publishing.",
+    !input.trustStatements && "Review generated claims before publishing.",
+  ].filter(Boolean) as string[];
 
   const isPhoneSeed =
     profile.key === "iPhone" &&
@@ -461,7 +489,7 @@ export function generateContent(input: GenerationInput): GeneratedContent {
   );
 
   return {
-    id: `${input.platform}-${input.contentType}-${input.campaign ?? "standard"}-${niche}-${input.tone}-v${variation}-${Date.now()}`.toLowerCase(),
+    id: stableKey(input, niche),
     title,
     hook,
     caption,
@@ -474,6 +502,7 @@ export function generateContent(input: GenerationInput): GeneratedContent {
     tone: input.tone,
     niche,
     campaign: input.campaign,
+    reviewWarnings,
     createdAt: new Date().toISOString(),
   };
 }

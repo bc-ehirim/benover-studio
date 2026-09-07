@@ -37,7 +37,7 @@ export function MediaGenerator({ result }: MediaGeneratorProps) {
     setError(null);
     imageUrlRef.current = null;
     videoUrlRef.current = null;
-  }, [result.id]);
+  }, [result.id, result.imagePrompt, result.videoPrompt, result.title, result.hook, result.cta]);
 
   useEffect(() => {
     return () => {

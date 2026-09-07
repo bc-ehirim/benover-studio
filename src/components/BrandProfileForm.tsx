@@ -38,13 +38,20 @@ export function BrandProfileForm({ profile, onChange }: BrandProfileFormProps) {
     onChange(resetBrandProfile());
   }
 
+  const summary = [
+    profile.business,
+    profile.location,
+    profile.currency,
+    profile.whatsapp && "WhatsApp configured",
+  ].filter(Boolean).join(" · ");
+
   return (
     <details className="panel group p-5">
       <summary className="flex cursor-pointer list-none items-center justify-between gap-3">
         <span>
           <span className="block text-sm font-semibold">Benover Tech profile</span>
           <span className="mt-1 block text-xs text-muted-foreground">
-            Save your contact, service and trust details once for every post.
+            {summary || "Save your contact, service and trust details once for every post."}
           </span>
         </span>
         <span className="text-xs text-primary group-open:hidden">Edit profile</span>

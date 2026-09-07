@@ -50,7 +50,11 @@ export function loadBrandProfile(): BrandProfile {
 
 export function saveBrandProfile(profile: BrandProfile): void {
   if (typeof window === "undefined") return;
-  window.localStorage.setItem(BRAND_PROFILE_KEY, JSON.stringify(profile));
+  try {
+    window.localStorage.setItem(BRAND_PROFILE_KEY, JSON.stringify(profile));
+  } catch {
+    // Keep the current profile in React state when storage is unavailable.
+  }
 }
 
 export function resetBrandProfile(): BrandProfile {

@@ -16,6 +16,7 @@ interface ResultCardProps {
   onChange?: (result: GeneratedContent) => void;
   onShorten?: (result: GeneratedContent) => void;
   onDelete?: (id: string) => void;
+  onSaveDraft?: (result: GeneratedContent) => void;
 }
 
 export function ResultCard({
@@ -24,11 +25,14 @@ export function ResultCard({
   onChange,
   onShorten,
   onDelete,
+  onSaveDraft,
 }: ResultCardProps) {
   const [edited, setEdited] = useState(result);
+  const [dirty, setDirty] = useState(false);
   useEffect(() => setEdited(result), [result]);
   function update(next: GeneratedContent) {
     setEdited(next);
+    setDirty(true);
     onChange?.(next);
   }
   const platform = PLATFORMS.find((p) => p.id === result.platform);
@@ -53,7 +57,7 @@ export function ResultCard({
             </span>
             <span className="rounded-full border border-border px-2.5 py-1">{result.niche}</span>
             <span className="rounded-full border border-border px-2.5 py-1">
-              {result.contentType.replace(/-/g, " ")}
+              {(result.campaign ?? result.contentType).replace(/-/g, " ")}
             </span>
             <span className="rounded-full border border-border px-2.5 py-1">
               {result.tone.replace(/-/g, " ")}
@@ -68,7 +72,7 @@ export function ResultCard({
             aria-label="Editable post title"
             className="mt-3 w-full bg-transparent text-xl font-semibold leading-snug outline-none sm:text-2xl"
           />
-          <p className="mt-2 text-sm italic text-primary/90">{result.hook}</p>
+          <p className="mt-2 text-sm italic text-primary/90">{edited.hook}</p>
         </div>
 
         <div className="px-5 py-5">
@@ -98,7 +102,7 @@ export function ResultCard({
                 <Hash className="h-4 w-4 text-primary" />
                 Hashtags
               </h4>
-              <span className="text-xs text-muted-foreground">{result.hashtags.length} tags</span>
+              <span className="text-xs text-muted-foreground">{edited.hashtags.length} tags</span>
             </div>
             <div className="mt-3 flex flex-wrap gap-1.5">
               {edited.hashtags.map((tag) => (
@@ -144,9 +148,21 @@ export function ResultCard({
           />
           <CopyButton label="Copy Hashtags" value={edited.hashtags.join(" ")} />
           <CopyButton label="Copy Complete Pack" value={fileText} />
-          <CopyButton label="Copy Image Prompt" value={result.imagePrompt} />
-          <CopyButton label="Copy Video Prompt" value={result.videoPrompt} />
+          <CopyButton label="Copy Image Prompt" value={edited.imagePrompt} />
+          <CopyButton label="Copy Video Prompt" value={edited.videoPrompt} />
           <DownloadButton filename="benover-content.txt" contents={fileText} />
+          {onSaveDraft && (
+            <button
+              type="button"
+              onClick={() => {
+                onSaveDraft(edited);
+                setDirty(false);
+              }}
+              className="inline-flex h-10 items-center justify-center rounded-xl border border-primary/40 px-4 text-sm font-medium text-primary hover:bg-primary/10"
+            >
+              {dirty ? "Save draft" : "Saved locally"}
+            </button>
+          )}
           {onShorten && (
             <button
               type="button"
@@ -179,6 +195,27 @@ export function ResultCard({
           )}
         </div>
       </motion.div>
+
+      {result.reviewWarnings && result.reviewWarnings.length > 0 && (
+        <section className="rounded-2xl border border-amber-500/30 bg-amber-500/10 px-4 py-4" aria-label="Review warnings">
+          <h4 className="text-sm font-semibold text-amber-900 dark:text-amber-200">Review before publishing</h4>
+          <ul className="mt-2 list-disc space-y-1 pl-5 text-xs text-amber-900/80 dark:text-amber-100/80">
+            {result.reviewWarnings.map((warning) => <li key={warning}>{warning}</li>)}
+          </ul>
+        </section>
+      )}
+
+      <section className="panel p-4" aria-label="Publishing checklist">
+        <h4 className="text-sm font-semibold">Publishing checklist</h4>
+        <div className="mt-3 grid gap-2 text-xs text-muted-foreground sm:grid-cols-2">
+          {["Model confirmed", "Condition confirmed", "Price confirmed", "Availability confirmed", "Claims reviewed", "Contact details checked"].map((item) => (
+            <label key={item} className="flex items-center gap-2">
+              <input type="checkbox" className="accent-primary" />
+              {item}
+            </label>
+          ))}
+        </div>
+      </section>
 
       <MediaGenerator result={edited} />
 
