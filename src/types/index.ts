@@ -1,4 +1,4 @@
-export type PlatformId = "facebook" | "instagram" | "tiktok";
+export type PlatformId = "facebook" | "instagram" | "tiktok" | "whatsapp";
 
 export type ContentTypeId =
   | "educational"
@@ -58,6 +58,26 @@ export interface GenerationInput {
   color?: string;
   price?: string;
   availability?: string;
+  location?: string;
+  delivery?: string;
+  warranty?: string;
+  paymentOptions?: string;
+  trustStatements?: string;
+  variation?: number;
+}
+
+export interface BrandProfile {
+  business: string;
+  location: string;
+  whatsapp: string;
+  currency: string;
+  delivery: string;
+  warranty: string;
+  paymentOptions: string;
+  audience: string;
+  tone: ToneId;
+  trustStatements: string;
+  cta: string;
 }
 
 export interface GeneratedContent {

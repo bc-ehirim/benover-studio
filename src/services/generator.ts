@@ -14,12 +14,14 @@ const PLATFORM_NAME = {
   facebook: "Facebook",
   instagram: "Instagram",
   tiktok: "TikTok",
+  whatsapp: "WhatsApp",
 } as const;
 
 const PLATFORM_FILLER_TAGS: Record<GenerationInput["platform"], string[]> = {
   facebook: ["#FacebookMarketplace", "#CommunityBusiness", "#CustomerService", "#LocalBusiness"],
   instagram: ["#ExplorePage", "#VisualMarketing", "#SmallBusiness", "#Reels"],
   tiktok: ["#TikTokMadeMeBuyIt", "#LearnOnTikTok", "#ForYou", "#ShortFormVideo"],
+  whatsapp: ["#WhatsAppBusiness", "#DirectSales", "#GadgetDeals", "#TechSupport"],
 };
 
 function toHashtag(value: string): string | null {
@@ -48,6 +50,11 @@ function normalizeInput(input: GenerationInput): GenerationInput {
     color: limitInput(input.color, INPUT_LIMITS.productField),
     price: limitInput(input.price, INPUT_LIMITS.productField),
     availability: limitInput(input.availability, INPUT_LIMITS.productField),
+    location: limitInput(input.location, INPUT_LIMITS.productField),
+    delivery: limitInput(input.delivery, INPUT_LIMITS.productField),
+    warranty: limitInput(input.warranty, INPUT_LIMITS.productField),
+    paymentOptions: limitInput(input.paymentOptions, INPUT_LIMITS.productField),
+    trustStatements: limitInput(input.trustStatements, INPUT_LIMITS.cta),
   };
 }
 
@@ -135,6 +142,10 @@ function formatCaption(
 ): string {
   const location = `📍 ${business} · ${niche}`;
   const bodySeparator = tone === "luxury" ? "\n\n" : "\n";
+
+  if (input.platform === "whatsapp") {
+    return [hook, "", ...body.slice(0, 3), "", cta, location].join("\n");
+  }
 
   if (input.platform === "tiktok") {
     const shortBody = body.slice(0, 3).map((line) => line.replace(/^\d+\.\s*/, ""));
@@ -243,9 +254,13 @@ function bodyFor(
       ];
     case "promotional":
       return [
-        `${profile.hero} is available right now, priced for ${audience}.`,
-        `No inflated "discount" games — just a fair number and honest condition.`,
-        `${profile.proof}.`,
+        `${profile.hero}, with the supplied product details ready for review.`,
+        input.price
+          ? `Price information: ${input.price}. Confirm the current price before publishing.`
+          : "Add the current price before publishing this offer.",
+        input.availability
+          ? `Availability: ${input.availability}. Confirm it is still current before publishing.`
+          : "Ask Benover Tech about current availability.",
       ];
     case "comparison":
       return [
@@ -264,19 +279,19 @@ function bodyFor(
     case "product-showcase":
       return [
         `${profile.hero}. Look at the finish, not just the price tag.`,
-        `We verify ${profile.detail} before it is listed.`,
-        `${profile.proof}.`,
+        `Review ${profile.detail} against the supplied product details before publishing.`,
+        input.trustStatements || "Add verified product details before posting.",
       ];
     case "customer-proof":
       return [
         `A good buying decision starts with clear information.`,
-        `${profile.proof}.`,
-        `${business} helps ${audience} compare before they commit.`,
+        input.trustStatements || "Add a verified customer experience before publishing this post.",
+        `${business} helps ${audience} compare the supplied details before they commit.`,
       ];
     default:
       return [
         `${profile.hero}.`,
-        `${profile.proof}.`,
+        input.trustStatements || "Review the supplied specifications before publishing.",
         `${business} helps ${audience} choose with more confidence.`,
       ];
   }
@@ -322,7 +337,7 @@ function buildVideoPrompt(
     ``,
     `SCENE 2 (5–13s): Hands inspecting the subject in clean studio light; cutaways to ${profile.detail}. Camera: handheld orbit at 30 degrees, then a smooth rack focus. Text overlay: "Compare the details that matter."`,
     ``,
-    `SCENE 3 (13–20s): The customer smiling as they receive the finished item; shop interior slightly out of focus behind. Camera: gentle push-in, ending on a static hero frame. Text overlay: "${profile.proof}."`,
+    `SCENE 3 (13–20s): The product in a clean retail setting with the supplied details shown clearly. Camera: gentle push-in, ending on a static hero frame. Text overlay: "Review the details before you choose."`,
     ``,
     `ENDING CTA (20–25s): Clean brand frame with the Benover Tech mark and a restrained blue-teal accent. Text overlay: "${cta}"`,
     ``,

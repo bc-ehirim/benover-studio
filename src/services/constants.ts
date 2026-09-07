@@ -25,6 +25,12 @@ export const PLATFORMS: Platform[] = [
     blurb: "Punchy hooks built for watch time",
     maxChars: 2200,
   },
+  {
+    id: "whatsapp",
+    name: "WhatsApp",
+    blurb: "Direct, concise buyer conversations",
+    maxChars: 1000,
+  },
 ];
 
 export const CONTENT_TYPES: ContentTypeOption[] = [
