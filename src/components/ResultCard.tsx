@@ -1,5 +1,6 @@
+import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { Hash, Image as ImageIcon, Info, Video } from "lucide-react";
+import { Hash, Image as ImageIcon, Info, RefreshCw, Video } from "lucide-react";
 import { CopyButton } from "./CopyButton";
 import { DownloadButton } from "./DownloadButton";
 import { MediaGenerator } from "./MediaGenerator";
@@ -11,14 +12,17 @@ import type { GeneratedContent } from "@/types";
 
 interface ResultCardProps {
   result: GeneratedContent;
+  onGenerateVariation?: () => void;
 }
 
-export function ResultCard({ result }: ResultCardProps) {
+export function ResultCard({ result, onGenerateVariation }: ResultCardProps) {
+  const [edited, setEdited] = useState(result);
+  useEffect(() => setEdited(result), [result]);
   const platform = PLATFORMS.find((p) => p.id === result.platform);
-  const charCount = result.caption.length;
+  const charCount = edited.caption.length;
   const max = platform?.maxChars ?? 2200;
-  const fileText = resultToText(result);
-  const captionWithHashtags = `${result.caption}\n\n${result.hashtags.join(" ")}`;
+  const fileText = resultToText(edited);
+  const captionWithHashtags = `${edited.caption}\n\n${edited.hashtags.join(" ")}`;
 
   return (
     <motion.div
@@ -45,7 +49,12 @@ export function ResultCard({ result }: ResultCardProps) {
               Draft for review
             </span>
           </div>
-          <h3 className="mt-3 text-xl font-semibold leading-snug sm:text-2xl">{result.title}</h3>
+          <input
+            value={edited.title}
+            onChange={(event) => setEdited({ ...edited, title: event.target.value })}
+            aria-label="Editable post title"
+            className="mt-3 w-full bg-transparent text-xl font-semibold leading-snug outline-none sm:text-2xl"
+          />
           <p className="mt-2 text-sm italic text-primary/90">{result.hook}</p>
         </div>
 
@@ -62,9 +71,13 @@ export function ResultCard({ result }: ResultCardProps) {
               {charCount.toLocaleString()} / {max.toLocaleString()} characters
             </span>
           </div>
-          <p className="mt-3 whitespace-pre-wrap text-sm leading-relaxed text-foreground/90">
-            {result.caption}
-          </p>
+          <textarea
+            value={edited.caption}
+            onChange={(event) => setEdited({ ...edited, caption: event.target.value })}
+            aria-label="Editable caption"
+            rows={10}
+            className="mt-3 w-full resize-y rounded-xl border border-border bg-background/40 p-3 text-sm leading-relaxed text-foreground/90 outline-none focus:border-primary/60 focus:ring-2 focus:ring-primary/20"
+          />
 
           <div className="mt-6">
             <div className="flex items-center justify-between">
@@ -72,12 +85,10 @@ export function ResultCard({ result }: ResultCardProps) {
                 <Hash className="h-4 w-4 text-primary" />
                 Hashtags
               </h4>
-              <span className="text-xs text-muted-foreground">
-                {result.hashtags.length} tags
-              </span>
+              <span className="text-xs text-muted-foreground">{result.hashtags.length} tags</span>
             </div>
             <div className="mt-3 flex flex-wrap gap-1.5">
-              {result.hashtags.map((tag) => (
+              {edited.hashtags.map((tag) => (
                 <span
                   key={tag}
                   className="rounded-full border border-border bg-surface/60 px-2.5 py-1 text-xs text-muted-foreground"
@@ -86,15 +97,33 @@ export function ResultCard({ result }: ResultCardProps) {
                 </span>
               ))}
             </div>
+            <textarea
+              value={edited.hashtags.join(" ")}
+              onChange={(event) =>
+                setEdited({
+                  ...edited,
+                  hashtags: event.target.value.split(/\s+/).filter(Boolean),
+                })
+              }
+              aria-label="Editable hashtags"
+              rows={2}
+              className="mt-3 w-full resize-y rounded-xl border border-border bg-background/40 p-3 text-xs text-muted-foreground outline-none focus:border-primary/60 focus:ring-2 focus:ring-primary/20"
+            />
           </div>
 
           <div className="mt-6 rounded-xl border border-primary/25 bg-primary/10 px-4 py-3">
             <p className="text-xs uppercase tracking-wider text-primary/80">Call to action</p>
-            <p className="mt-1 text-sm font-medium">{result.cta}</p>
+            <input
+              value={edited.cta}
+              onChange={(event) => setEdited({ ...edited, cta: event.target.value })}
+              aria-label="Editable call to action"
+              className="mt-1 w-full bg-transparent text-sm font-medium outline-none"
+            />
           </div>
         </div>
 
         <div className="flex flex-wrap gap-2 border-t border-border bg-surface/30 px-5 py-4">
+          <CopyButton label="Copy Caption" value={edited.caption} />
           <CopyButton
             label="Copy Caption + Hashtags"
             value={captionWithHashtags}
@@ -104,6 +133,16 @@ export function ResultCard({ result }: ResultCardProps) {
           <CopyButton label="Copy Image Prompt" value={result.imagePrompt} />
           <CopyButton label="Copy Video Prompt" value={result.videoPrompt} />
           <DownloadButton filename="benover-content.txt" contents={fileText} />
+          {onGenerateVariation && (
+            <button
+              type="button"
+              onClick={onGenerateVariation}
+              className="inline-flex h-10 items-center justify-center gap-2 rounded-xl border border-border bg-surface/50 px-4 text-sm font-medium transition-colors hover:border-primary/50 hover:bg-surface focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+            >
+              <RefreshCw className="h-4 w-4" />
+              Generate variation
+            </button>
+          )}
         </div>
       </motion.div>
 

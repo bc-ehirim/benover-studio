@@ -126,8 +126,9 @@ export function MediaGenerator({ result }: MediaGeneratorProps) {
         <p className="text-xs font-semibold uppercase tracking-wider text-primary">Create media</p>
         <h4 className="mt-1 text-base font-semibold">Bring this Benover Tech post to life</h4>
         <p className="mt-1 text-xs leading-relaxed text-muted-foreground">
-          Free community image generation may vary in speed and availability. Videos are assembled
-          locally from the image, title, hook and CTA.
+          Image generation is optional and uses a free online service. The image prompt and supplied
+          product facts are sent only when you choose to generate an image. Videos are assembled
+          locally from the returned image, title, hook and CTA.
         </p>
       </div>
 
@@ -149,15 +150,30 @@ export function MediaGenerator({ result }: MediaGeneratorProps) {
       )}
 
       {error && (
-        <p role="alert" className="rounded-lg border border-destructive/30 bg-destructive/10 px-3 py-2 text-xs text-destructive">
+        <p
+          role="alert"
+          className="rounded-lg border border-destructive/30 bg-destructive/10 px-3 py-2 text-xs text-destructive"
+        >
           {error}
         </p>
       )}
 
       <div className="flex flex-wrap gap-2">
-        <AnimatedButton size="sm" onClick={handleGenerateImage} disabled={imageLoading || videoLoading}>
-          {imageLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : <ImageIcon className="h-4 w-4" />}
-          {imageLoading ? "Generating image..." : imageUrl ? "Regenerate image" : "Generate free image"}
+        <AnimatedButton
+          size="sm"
+          onClick={handleGenerateImage}
+          disabled={imageLoading || videoLoading}
+        >
+          {imageLoading ? (
+            <Loader2 className="h-4 w-4 animate-spin" />
+          ) : (
+            <ImageIcon className="h-4 w-4" />
+          )}
+          {imageLoading
+            ? "Generating image..."
+            : imageUrl
+              ? "Regenerate image"
+              : "Generate free image"}
         </AnimatedButton>
         {imageLoading && (
           <AnimatedButton size="sm" variant="ghost" onClick={handleCancelImage}>
@@ -174,7 +190,11 @@ export function MediaGenerator({ result }: MediaGeneratorProps) {
               onClick={handleGenerateVideo}
               disabled={imageLoading || videoLoading}
             >
-              {videoLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Video className="h-4 w-4" />}
+              {videoLoading ? (
+                <Loader2 className="h-4 w-4 animate-spin" />
+              ) : (
+                <Video className="h-4 w-4" />
+              )}
               {videoLoading ? "Assembling video..." : "Create free video"}
             </AnimatedButton>
           )}

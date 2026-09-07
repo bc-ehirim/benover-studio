@@ -1,21 +1,10 @@
 export type PlatformId = "facebook" | "instagram" | "tiktok" | "whatsapp";
 
 export type ContentTypeId =
-  | "educational"
-  | "promotional"
-  | "comparison"
-  | "tips"
-  | "product-showcase"
-  | "customer-proof";
+  "educational" | "promotional" | "comparison" | "tips" | "product-showcase" | "customer-proof";
 
 export type ToneId =
-  | "professional"
-  | "street-nigerian"
-  | "luxury"
-  | "funny"
-  | "emotional"
-  | "corporate"
-  | "gen-z";
+  "professional" | "street-nigerian" | "luxury" | "funny" | "emotional" | "corporate" | "gen-z";
 
 export interface Platform {
   id: PlatformId;

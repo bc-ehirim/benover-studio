@@ -21,6 +21,11 @@ import {
 } from "@/services/constants";
 import { generateContent } from "@/services/generator";
 import { loadBrandProfile, saveBrandProfile } from "@/services/brand-profile";
+import {
+  clearContentHistory,
+  loadContentHistory,
+  saveContentHistory,
+} from "@/services/content-history";
 import { fadeUp, stagger, viewportOnce } from "@/utils/motion";
 import type {
   ContentTypeId,
@@ -54,9 +59,11 @@ export function Studio() {
   const [color, setColor] = useState("");
   const [price, setPrice] = useState("");
   const [availability, setAvailability] = useState("");
+  const [variation, setVariation] = useState(0);
   const [advancedOpen, setAdvancedOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState<GeneratedContent | null>(null);
+  const [history, setHistory] = useState<GeneratedContent[]>(loadContentHistory);
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
@@ -101,6 +108,7 @@ export function Studio() {
         warranty: brandProfile.warranty,
         paymentOptions: brandProfile.paymentOptions,
         trustStatements: brandProfile.trustStatements,
+        variation,
         ...overrides,
       };
       setLoading(true);
@@ -108,7 +116,9 @@ export function Studio() {
       const delay = 800 + Math.floor(Math.random() * 700);
       if (timer.current) clearTimeout(timer.current);
       timer.current = setTimeout(() => {
-        setResult(generateContent(input));
+        const generated = generateContent(input);
+        setResult(generated);
+        setHistory(saveContentHistory(generated));
         setLoading(false);
       }, delay);
     },
@@ -129,6 +139,12 @@ export function Studio() {
       color,
       price,
       availability,
+      brandProfile.location,
+      brandProfile.delivery,
+      brandProfile.warranty,
+      brandProfile.paymentOptions,
+      brandProfile.trustStatements,
+      variation,
     ],
   );
 
@@ -139,6 +155,12 @@ export function Studio() {
 
   function handlePickDay(day: CalendarDay) {
     setContentType(day.contentType);
+  }
+
+  function generateVariation() {
+    const nextVariation = variation + 1;
+    setVariation(nextVariation);
+    run({ variation: nextVariation });
   }
 
   return (
@@ -160,8 +182,8 @@ export function Studio() {
               Build Benover Tech&apos;s next product post
             </h2>
             <p className="mx-auto mt-3 max-w-lg text-sm text-muted-foreground">
-              Turn a gadget category, campaign type and tone into ready-to-publish social content.
-              Everything is generated on your device.
+              Turn a gadget category, campaign type and verified product facts into a publishing
+              draft. Copy and video assembly are local; image generation is optional and online.
             </p>
           </motion.div>
 
@@ -190,7 +212,11 @@ export function Studio() {
           <motion.div variants={fadeUp} className="panel space-y-7 p-5 sm:p-6">
             <div>
               <p className={labelClass}>Platform</p>
-              <div role="radiogroup" aria-label="Platform" className="mt-3 grid grid-cols-3 gap-2.5">
+              <div
+                role="radiogroup"
+                aria-label="Platform"
+                className="mt-3 grid grid-cols-2 gap-2.5 sm:grid-cols-4"
+              >
                 {PLATFORMS.map((p) => (
                   <PlatformCard
                     key={p.id}
@@ -235,7 +261,9 @@ export function Studio() {
                     className="rounded-xl border border-border bg-surface/50 p-3 text-left transition-colors hover:border-primary/50 hover:bg-surface focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                   >
                     <span className="block text-xs font-semibold">{preset.name}</span>
-                    <span className="mt-1 block text-[11px] leading-snug text-muted-foreground">{preset.blurb}</span>
+                    <span className="mt-1 block text-[11px] leading-snug text-muted-foreground">
+                      {preset.blurb}
+                    </span>
                   </button>
                 ))}
               </div>
@@ -300,7 +328,9 @@ export function Studio() {
                 ["price", "Price", price, setPrice, "e.g. Ask for current price"],
               ].map(([id, label, value, setter, placeholder]) => (
                 <div key={id as string}>
-                  <label className={labelClass} htmlFor={id as string}>{label as string}</label>
+                  <label className={labelClass} htmlFor={id as string}>
+                    {label as string}
+                  </label>
                   <input
                     id={id as string}
                     value={value as string}
@@ -313,8 +343,13 @@ export function Studio() {
               ))}
             </div>
 
-            <details open={advancedOpen} onToggle={(event) => setAdvancedOpen(event.currentTarget.open)}>
-              <summary className="cursor-pointer text-sm font-semibold text-primary">Advanced details</summary>
+            <details
+              open={advancedOpen}
+              onToggle={(event) => setAdvancedOpen(event.currentTarget.open)}
+            >
+              <summary className="cursor-pointer text-sm font-semibold text-primary">
+                Advanced details
+              </summary>
               <div className="mt-4 space-y-5">
                 <div>
                   <p className={labelClass}>Tone</p>
@@ -324,79 +359,96 @@ export function Studio() {
                 </div>
 
                 <div className="grid gap-3 sm:grid-cols-3">
-              <div>
-                <label className={labelClass} htmlFor="business">
-                  Business
-                </label>
-                <input
-                  id="business"
-                  value={business}
-                  onChange={(e) => setBusiness(e.target.value)}
-                  maxLength={INPUT_LIMITS.business}
-                  placeholder="Benover Tech"
-                  className={`${inputClass} mt-2.5`}
-                />
-              </div>
-              <div>
-                <label className={labelClass} htmlFor="audience">
-                  Target audience
-                </label>
-                <input
-                  id="audience"
-                  value={audience}
-                  onChange={(e) => setAudience(e.target.value)}
-                  maxLength={INPUT_LIMITS.audience}
-                  placeholder="People upgrading their everyday tech"
-                  className={`${inputClass} mt-2.5`}
-                />
-              </div>
-              <div>
-                <label className={labelClass} htmlFor="cta">
-                  Call to action
-                </label>
-                <input
-                  id="cta"
-                  value={cta}
-                  onChange={(e) => setCta(e.target.value)}
-                  maxLength={INPUT_LIMITS.cta}
-                  placeholder="Message Benover Tech for current availability."
-                  className={`${inputClass} mt-2.5`}
-                />
-              </div>
+                  <div>
+                    <label className={labelClass} htmlFor="business">
+                      Business
+                    </label>
+                    <input
+                      id="business"
+                      value={business}
+                      onChange={(e) => setBusiness(e.target.value)}
+                      maxLength={INPUT_LIMITS.business}
+                      placeholder="Benover Tech"
+                      className={`${inputClass} mt-2.5`}
+                    />
+                  </div>
+                  <div>
+                    <label className={labelClass} htmlFor="audience">
+                      Target audience
+                    </label>
+                    <input
+                      id="audience"
+                      value={audience}
+                      onChange={(e) => setAudience(e.target.value)}
+                      maxLength={INPUT_LIMITS.audience}
+                      placeholder="People upgrading their everyday tech"
+                      className={`${inputClass} mt-2.5`}
+                    />
+                  </div>
+                  <div>
+                    <label className={labelClass} htmlFor="cta">
+                      Call to action
+                    </label>
+                    <input
+                      id="cta"
+                      value={cta}
+                      onChange={(e) => setCta(e.target.value)}
+                      maxLength={INPUT_LIMITS.cta}
+                      placeholder="Message Benover Tech for current availability."
+                      className={`${inputClass} mt-2.5`}
+                    />
+                  </div>
                 </div>
               </div>
             </details>
 
             <details className="rounded-xl border border-border/70 p-4">
-              <summary className="cursor-pointer text-sm font-semibold">Additional product facts</summary>
+              <summary className="cursor-pointer text-sm font-semibold">
+                Additional product facts
+              </summary>
               <div className="mt-4">
-              <p className={labelClass}>Product details (optional)</p>
-              <div className="mt-3 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-                {[
-                  ["storage", "Storage", storage, setStorage, "e.g. 256GB"],
-                  ["ram", "RAM", ram, setRam, "e.g. 16GB"],
-                  ["batteryHealth", "Battery health", batteryHealth, setBatteryHealth, "e.g. 92%"],
-                  ["color", "Colour", color, setColor, "e.g. Graphite"],
-                  ["availability", "Availability", availability, setAvailability, "In stock or pre-order"],
-                ].map(([id, label, value, setter, placeholder]) => (
-                  <div key={id as string}>
-                    <label className="text-xs text-muted-foreground" htmlFor={id as string}>
-                      {label as string}
-                    </label>
-                    <input
-                      id={id as string}
-                      value={value as string}
-                      onChange={(event) => (setter as (value: string) => void)(event.target.value)}
-                      maxLength={INPUT_LIMITS.productField}
-                      placeholder={placeholder as string}
-                      className={`${inputClass} mt-1.5 h-10`}
-                    />
-                  </div>
-                ))}
-              </div>
-              <p className="mt-2 text-[11px] text-muted-foreground">
-                Add only facts you are ready to publish. Generated copy remains a draft for review.
-              </p>
+                <p className={labelClass}>Product details (optional)</p>
+                <div className="mt-3 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+                  {[
+                    ["storage", "Storage", storage, setStorage, "e.g. 256GB"],
+                    ["ram", "RAM", ram, setRam, "e.g. 16GB"],
+                    [
+                      "batteryHealth",
+                      "Battery health",
+                      batteryHealth,
+                      setBatteryHealth,
+                      "e.g. 92%",
+                    ],
+                    ["color", "Colour", color, setColor, "e.g. Graphite"],
+                    [
+                      "availability",
+                      "Availability",
+                      availability,
+                      setAvailability,
+                      "In stock or pre-order",
+                    ],
+                  ].map(([id, label, value, setter, placeholder]) => (
+                    <div key={id as string}>
+                      <label className="text-xs text-muted-foreground" htmlFor={id as string}>
+                        {label as string}
+                      </label>
+                      <input
+                        id={id as string}
+                        value={value as string}
+                        onChange={(event) =>
+                          (setter as (value: string) => void)(event.target.value)
+                        }
+                        maxLength={INPUT_LIMITS.productField}
+                        placeholder={placeholder as string}
+                        className={`${inputClass} mt-1.5 h-10`}
+                      />
+                    </div>
+                  ))}
+                </div>
+                <p className="mt-2 text-[11px] text-muted-foreground">
+                  Add only facts you are ready to publish. Generated copy remains a draft for
+                  review.
+                </p>
               </div>
             </details>
 
@@ -423,8 +475,52 @@ export function Studio() {
               <ResultSkeleton />
             </motion.div>
           )}
-          {!loading && result && <ResultCard key={result.id + result.createdAt} result={result} />}
+          {!loading && result && (
+            <ResultCard
+              key={result.id + result.createdAt}
+              result={result}
+              onGenerateVariation={generateVariation}
+            />
+          )}
         </AnimatePresence>
+
+        {history.length > 0 && (
+          <div className="mt-8 rounded-2xl border border-border bg-surface/40 p-4">
+            <div className="flex items-center justify-between gap-3">
+              <div>
+                <h3 className="text-sm font-semibold">Recent drafts</h3>
+                <p className="mt-1 text-xs text-muted-foreground">
+                  Saved in this browser for quick reuse.
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={() => {
+                  clearContentHistory();
+                  setHistory([]);
+                }}
+                className="text-xs text-muted-foreground hover:text-foreground"
+              >
+                Clear history
+              </button>
+            </div>
+            <div className="mt-3 grid gap-2 sm:grid-cols-2">
+              {history.map((item) => (
+                <button
+                  key={`${item.id}-${item.createdAt}`}
+                  type="button"
+                  onClick={() => setResult(item)}
+                  className="rounded-xl border border-border bg-background/40 p-3 text-left hover:border-primary/50"
+                >
+                  <span className="block truncate text-sm font-medium">{item.title}</span>
+                  <span className="mt-1 block text-xs text-muted-foreground">
+                    {item.platform} · {item.niche}
+                  </span>
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
 
         {!loading && !result && (
           <p className="mt-8 text-center text-sm text-muted-foreground">

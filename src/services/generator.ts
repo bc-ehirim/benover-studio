@@ -97,12 +97,11 @@ function buildHashtags(input: GenerationInput, profile: NicheProfile): string[] 
   ] as const;
 
   push(toHashtag(profile.key) ?? "");
-  push(business.toLowerCase() === "benover tech" ? "#BenoverTech" : toHashtag(business) ?? "");
+  push(business.toLowerCase() === "benover tech" ? "#BenoverTech" : (toHashtag(business) ?? ""));
   PLATFORM_FILLER_TAGS[input.platform]?.forEach(push);
   profile.tags
     .filter(
-      (tag) =>
-        isNigeriaContext || !/(nigeria|lagos|naija|nigerian|lekki|abuja|ukused)/i.test(tag),
+      (tag) => isNigeriaContext || !/(nigeria|lagos|naija|nigerian|lekki|abuja|ukused)/i.test(tag),
     )
     .forEach(push);
   if (profile.key === "iPhone" && isNigeriaContext) push("#iPhoneNigeria");
@@ -149,14 +148,7 @@ function formatCaption(
 
   if (input.platform === "tiktok") {
     const shortBody = body.slice(0, 3).map((line) => line.replace(/^\d+\.\s*/, ""));
-    return [
-      hook,
-      "",
-      ...shortBody,
-      "",
-      `${cta}`,
-      location,
-    ].join("\n");
+    return [hook, "", ...shortBody, "", `${cta}`, location].join("\n");
   }
 
   if (input.platform === "instagram") {
@@ -196,14 +188,23 @@ function applyToneToText(text: string, tone: ToneId, index: number): string {
       return text
         .replace(/clean, /gi, "considered, ")
         .replace(/fair number and honest condition/gi, "transparent value and assured condition")
-        .replace(/quality, price honesty and after-sales support/gi, "quiet quality and thoughtful support")
+        .replace(
+          /quality, price honesty and after-sales support/gi,
+          "quiet quality and thoughtful support",
+        )
         .replace(/\.$/, ".");
     case "funny":
       return index === 0 ? `${text.replace(/\.$/, "")} (yes, really).` : text;
     case "emotional":
       return text
-        .replace(/Most disappointments are not bad luck\./, "The disappointment stays with you long after the purchase.")
-        .replace(/Buy once\. Rest\. That is the whole offer\./, "Buy once. Rest. You deserve that peace of mind.");
+        .replace(
+          /Most disappointments are not bad luck\./,
+          "The disappointment stays with you long after the purchase.",
+        )
+        .replace(
+          /Buy once\. Rest\. That is the whole offer\./,
+          "Buy once. Rest. You deserve that peace of mind.",
+        );
     case "corporate":
       return index === 0 ? `Recommendation: ${text}` : text;
     case "gen-z":
@@ -250,7 +251,7 @@ function bodyFor(
       return [
         `Before you spend money on ${profile.subject}, check ${profile.detail}.`,
         `Most disappointments are not bad luck. They are skipped checks.`,
-        `At ${business}, ${profile.proof}.`,
+        input.trustStatements || `At ${business}, review the supplied details before you commit.`,
       ];
     case "promotional":
       return [
@@ -266,7 +267,7 @@ function bodyFor(
       return [
         `Compare ${profile.detail} before you decide.`,
         `The right choice depends on your routine, priorities and budget.`,
-        `${profile.proof}.`,
+        input.trustStatements || "Review the supplied specifications before publishing.",
       ];
     case "tips":
       return [
@@ -303,7 +304,12 @@ function buildImagePrompt(
   business: string,
   audience: string,
 ): string {
-  const ratio = input.platform === "tiktok" ? "9:16 vertical" : input.platform === "instagram" ? "4:5 portrait" : "1:1 square";
+  const ratio =
+    input.platform === "tiktok"
+      ? "9:16 vertical"
+      : input.platform === "instagram"
+        ? "4:5 portrait"
+        : "1:1 square";
   return [
     `SUBJECT: one ${profile.key} product, specifically ${profile.imageSubject}.`,
     `PRODUCT FACTS: ${productDetails(input)}. Preserve the product category and physical form exactly.`,
@@ -345,7 +351,7 @@ function buildVideoPrompt(
   ].join("\n");
 }
 
-/** Deterministic, fully local generation. No network calls. */
+/** Deterministic local copy generation. Optional media generation uses a separate online service. */
 export function generateContent(input: GenerationInput): GeneratedContent {
   input = normalizeInput(input);
   const niche = resolveNiche(input);
@@ -355,15 +361,19 @@ export function generateContent(input: GenerationInput): GeneratedContent {
   const cta = input.cta?.trim() || DEFAULT_CTA;
 
   const isPhoneSeed =
-    profile.key === "iPhone" && (input.contentType === "educational" || input.contentType === "tips");
+    profile.key === "iPhone" &&
+    (input.contentType === "educational" || input.contentType === "tips");
 
-  const title = isPhoneSeed
+  const baseTitle = isPhoneSeed
     ? "3 Smart Checks Before Buying an iPhone"
     : TITLE_TEMPLATES[input.contentType](profile);
 
-  const hook = isPhoneSeed
+  const baseHook = isPhoneSeed
     ? "Before you choose an iPhone, check the details that affect how it will perform every day."
     : HOOK_TEMPLATES[input.contentType](profile);
+  const variation = input.variation ?? 0;
+  const title = variation > 0 ? `${baseTitle} · Variation ${variation}` : baseTitle;
+  const hook = variation > 0 ? `A different angle: ${baseHook}` : baseHook;
 
   const body = isPhoneSeed
     ? [

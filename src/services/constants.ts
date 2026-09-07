@@ -1,10 +1,4 @@
-import type {
-  ContentTypeOption,
-  NicheOption,
-  Platform,
-  ToneOption,
-  ContentTypeId,
-} from "@/types";
+import type { ContentTypeOption, NicheOption, Platform, ToneOption, ContentTypeId } from "@/types";
 
 export const PLATFORMS: Platform[] = [
   {
@@ -44,13 +38,48 @@ export const CONTENT_TYPES: ContentTypeOption[] = [
 
 export const CAMPAIGN_PRESETS: Array<ContentTypeOption & { contentType: ContentTypeId }> = [
   { id: "promotional", name: "New stock", blurb: "Announce a product", contentType: "promotional" },
-  { id: "product-showcase", name: "Used device check", blurb: "Show condition clearly", contentType: "product-showcase" },
-  { id: "promotional", name: "Price drop", blurb: "Share a price update", contentType: "promotional" },
-  { id: "promotional", name: "WhatsApp sales", blurb: "Start a buyer chat", contentType: "promotional" },
-  { id: "customer-proof", name: "Customer testimonial", blurb: "Add a verified experience", contentType: "customer-proof" },
-  { id: "educational", name: "Buyer education", blurb: "Explain what to check", contentType: "educational" },
-  { id: "comparison", name: "Product comparison", blurb: "Help buyers decide", contentType: "comparison" },
-  { id: "product-showcase", name: "Product showcase", blurb: "Make the product the hero", contentType: "product-showcase" },
+  {
+    id: "product-showcase",
+    name: "Used device check",
+    blurb: "Show condition clearly",
+    contentType: "product-showcase",
+  },
+  {
+    id: "promotional",
+    name: "Price drop",
+    blurb: "Share a price update",
+    contentType: "promotional",
+  },
+  {
+    id: "promotional",
+    name: "WhatsApp sales",
+    blurb: "Start a buyer chat",
+    contentType: "promotional",
+  },
+  {
+    id: "customer-proof",
+    name: "Customer testimonial",
+    blurb: "Add a verified experience",
+    contentType: "customer-proof",
+  },
+  {
+    id: "educational",
+    name: "Buyer education",
+    blurb: "Explain what to check",
+    contentType: "educational",
+  },
+  {
+    id: "comparison",
+    name: "Product comparison",
+    blurb: "Help buyers decide",
+    contentType: "comparison",
+  },
+  {
+    id: "product-showcase",
+    name: "Product showcase",
+    blurb: "Make the product the hero",
+    contentType: "product-showcase",
+  },
 ];
 
 export const TONES: ToneOption[] = [

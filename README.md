@@ -1,8 +1,8 @@
 # Benover Tech Gadget Content Generator
 
-Benover Tech is a local, offline social-content generator for gadget marketing. It creates ready-to-publish content for iPhones, Samsung phones, laptops, accessories, tablets, smartwatches, earbuds and audio, chargers and power banks, and monitors.
+Benover Tech is a private, local-first social-content generator for gadget marketing. It creates publishing drafts for iPhones, Samsung phones, laptops, accessories, tablets, smartwatches, earbuds and audio, chargers and power banks, and monitors.
 
-The app has no database, authentication, user accounts, backend API, API keys, or uploads. Generation is deterministic and runs on the device. Users can create platform-specific captions for Facebook, Instagram, and TikTok, plus hashtags, image prompts, video prompts, and TXT exports.
+The app has no database, authentication, user accounts, backend API, API keys, or product uploads. Copy generation is deterministic and runs on the device. Users can create platform-specific captions for Facebook, Instagram, TikTok, and WhatsApp, plus hashtags, image prompts, video prompts, and TXT exports. Image generation is optional and uses a free online service; supplied image prompts and product facts are sent only when that action is selected.
 
 ## Product scope
 

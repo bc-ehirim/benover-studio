@@ -1,6 +1,10 @@
 import { RotateCcw, Save } from "lucide-react";
 import { AnimatedButton } from "./AnimatedButton";
-import { DEFAULT_BRAND_PROFILE, resetBrandProfile, saveBrandProfile } from "@/services/brand-profile";
+import {
+  DEFAULT_BRAND_PROFILE,
+  resetBrandProfile,
+  saveBrandProfile,
+} from "@/services/brand-profile";
 import type { BrandProfile } from "@/types";
 
 interface BrandProfileFormProps {
