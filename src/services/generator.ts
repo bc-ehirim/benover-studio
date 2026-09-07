@@ -40,6 +40,7 @@ function normalizeInput(input: GenerationInput): GenerationInput {
     ...input,
     customNiche: limitInput(input.customNiche, INPUT_LIMITS.customNiche),
     business: limitInput(input.business, INPUT_LIMITS.business),
+    whatsapp: limitInput(input.whatsapp, INPUT_LIMITS.productField),
     audience: limitInput(input.audience, INPUT_LIMITS.audience),
     cta: limitInput(input.cta, INPUT_LIMITS.cta),
     model: limitInput(input.model, INPUT_LIMITS.productField),
@@ -139,7 +140,11 @@ function formatCaption(
   niche: string,
   tone: ToneId,
 ): string {
-  const location = `📍 ${business} · ${niche}`;
+  const location = [
+    `📍 ${business}`,
+    input.location,
+    niche,
+  ].filter(Boolean).join(" · ");
   const bodySeparator = tone === "luxury" ? "\n\n" : "\n";
 
   if (input.platform === "whatsapp") {
@@ -246,6 +251,41 @@ function bodyFor(
   audience: string,
 ): string[] {
   const t = input.contentType;
+  if (input.campaign === "new-stock") {
+    return [
+      `${profile.hero} is ready for a new owner.`,
+      `Product facts to review: ${productDetails(input)}.`,
+      input.availability ? `Availability: ${input.availability}.` : "Ask about current availability before publishing.",
+    ];
+  }
+  if (input.campaign === "price-drop") {
+    return [
+      `${profile.hero} has a price update for buyers comparing their next upgrade.`,
+      input.price ? `Updated price: ${input.price}. Confirm it is current before publishing.` : "Add the updated price before publishing this post.",
+      "Keep the previous price and offer terms only when they have been verified.",
+    ];
+  }
+  if (input.campaign === "trade-in") {
+    return [
+      `Thinking about upgrading your ${profile.subject}? Ask ${business} about trade-in options.`,
+      `Share the current device model and condition so the next steps can be explained clearly.`,
+      input.trustStatements || "Trade-in terms must be confirmed before publishing.",
+    ];
+  }
+  if (input.campaign === "whatsapp-sales") {
+    return [
+      `${profile.hero}, with the key details ready for a direct buyer conversation.`,
+      `Send the model, condition and budget to ${business} for the next step.`,
+      input.availability ? `Availability: ${input.availability}.` : "Ask about current availability.",
+    ];
+  }
+  if (input.campaign === "used-device-check") {
+    return [
+      `Before choosing this used ${profile.key}, review the supplied condition and product facts.`,
+      `Check ${profile.detail} yourself before payment.`,
+      input.trustStatements || "Add only inspection details that have been confirmed.",
+    ];
+  }
   switch (t) {
     case "educational":
       return [
@@ -335,7 +375,7 @@ function buildVideoPrompt(
     `AI VIDEO PROMPT — works in Veo, Kling, Hailuo, Sora, Runway and InVideo AI`,
     ``,
     `FORMAT: ${ratio}, 15–25 seconds, polished premium gadget retail aesthetic with clean graphite, blue and teal accents.`,
-    `BRAND CONTEXT: ${business}. TARGET AUDIENCE: ${audience}. PRODUCT DETAILS: ${productDetails(input)}.`,
+    `BRAND CONTEXT: ${business}. TARGET AUDIENCE: ${audience}. PRODUCT DETAILS: ${productDetails(input)}. CONTACT: ${input.whatsapp || "use the configured Benover Tech contact"}.`,
     ``,
     `OPENING HOOK (0–3s): ${hook}`,
     ``,
@@ -359,6 +399,15 @@ export function generateContent(input: GenerationInput): GeneratedContent {
   const business = input.business?.trim() || "Benover Tech";
   const audience = input.audience?.trim() || `${niche.toLowerCase()} buyers`;
   const cta = input.cta?.trim() || DEFAULT_CTA;
+  const profileDetails = [
+    input.location && `Location: ${input.location}.`,
+    input.delivery && `Delivery or pickup: ${input.delivery}.`,
+    input.warranty && `Warranty or returns: ${input.warranty}.`,
+    input.paymentOptions && `Payment options: ${input.paymentOptions}.`,
+  ].filter(Boolean) as string[];
+  const profileCta = input.whatsapp?.trim()
+    ? `${cta} WhatsApp: ${input.whatsapp.trim()}.`
+    : cta;
 
   const isPhoneSeed =
     profile.key === "iPhone" &&
@@ -380,9 +429,11 @@ export function generateContent(input: GenerationInput): GeneratedContent {
         "Check 1: Battery health. Open Settings and review the number yourself so you understand the device's likely daily performance.",
         "Check 2: iCloud status. Confirm the phone is ready for its next owner before you commit.",
         "Check 3: The display and cameras. Test touch response, brightness, focus and image quality across the device.",
-        `At ${business}, we discuss the supplied product details clearly, so ${audience} can buy with confidence.`,
+        input.trustStatements ||
+          `At ${business}, review the supplied product details clearly before ${audience} commits.`,
       ]
     : bodyFor(input, profile, business, audience);
+  if (profileDetails.length) body.push(...profileDetails);
 
   const details = productDetails(input);
   const detailedBody = body.map((line, index) =>
@@ -400,25 +451,26 @@ export function generateContent(input: GenerationInput): GeneratedContent {
     opener,
     styledHook,
     closer,
-    cta,
+    profileCta,
     business,
     niche,
     input.tone,
   );
 
   return {
-    id: `${input.platform}-${input.contentType}-${niche}-${input.tone}`.toLowerCase(),
+    id: `${input.platform}-${input.contentType}-${input.campaign ?? "standard"}-${niche}-${input.tone}-v${variation}-${Date.now()}`.toLowerCase(),
     title,
     hook,
     caption,
     hashtags: buildHashtags(input, profile),
-    cta,
+    cta: profileCta,
     imagePrompt: buildImagePrompt(profile, input, business, audience),
-    videoPrompt: buildVideoPrompt(profile, input, styledHook, cta, business, audience),
+    videoPrompt: buildVideoPrompt(profile, input, styledHook, profileCta, business, audience),
     platform: input.platform,
     contentType: input.contentType,
     tone: input.tone,
     niche,
+    campaign: input.campaign,
     createdAt: new Date().toISOString(),
   };
 }

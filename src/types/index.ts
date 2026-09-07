@@ -6,6 +6,17 @@ export type ContentTypeId =
 export type ToneId =
   "professional" | "street-nigerian" | "luxury" | "funny" | "emotional" | "corporate" | "gen-z";
 
+export type CampaignId =
+  | "new-stock"
+  | "used-device-check"
+  | "price-drop"
+  | "whatsapp-sales"
+  | "trade-in"
+  | "customer-testimonial"
+  | "buyer-education"
+  | "product-comparison"
+  | "product-showcase";
+
 export interface Platform {
   id: PlatformId;
   name: string;
@@ -53,6 +64,7 @@ export interface GenerationInput {
   paymentOptions?: string;
   trustStatements?: string;
   variation?: number;
+  campaign?: CampaignId;
 }
 
 export interface BrandProfile {
@@ -82,6 +94,7 @@ export interface GeneratedContent {
   contentType: ContentTypeId;
   tone: ToneId;
   niche: string;
+  campaign?: CampaignId;
   createdAt: string;
 }
 

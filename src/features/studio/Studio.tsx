@@ -28,6 +28,7 @@ import {
 } from "@/services/content-history";
 import { fadeUp, stagger, viewportOnce } from "@/utils/motion";
 import type {
+  CampaignId,
   ContentTypeId,
   GeneratedContent,
   GenerationInput,
@@ -45,6 +46,7 @@ export function Studio() {
   const [brandProfile, setBrandProfile] = useState<BrandProfile>(loadBrandProfile);
   const [platform, setPlatform] = useState<PlatformId>("instagram");
   const [contentType, setContentType] = useState<ContentTypeId>("educational");
+  const [campaign, setCampaign] = useState<CampaignId | undefined>(undefined);
   const [niche, setNiche] = useState("iPhone");
   const [customNiche, setCustomNiche] = useState("");
   const [tone, setTone] = useState<ToneId>(brandProfile.tone);
@@ -109,6 +111,7 @@ export function Studio() {
         paymentOptions: brandProfile.paymentOptions,
         trustStatements: brandProfile.trustStatements,
         variation,
+        campaign,
         ...overrides,
       };
       setLoading(true);
@@ -145,6 +148,7 @@ export function Studio() {
       brandProfile.paymentOptions,
       brandProfile.trustStatements,
       variation,
+      campaign,
     ],
   );
 
@@ -256,6 +260,7 @@ export function Studio() {
                     type="button"
                     onClick={() => {
                       setContentType(preset.contentType);
+                      setCampaign(preset.campaign);
                       if (preset.name === "WhatsApp sales") setPlatform("whatsapp");
                     }}
                     className="rounded-xl border border-border bg-surface/50 p-3 text-left transition-colors hover:border-primary/50 hover:bg-surface focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"

@@ -1,4 +1,11 @@
-import type { ContentTypeOption, NicheOption, Platform, ToneOption, ContentTypeId } from "@/types";
+import type {
+  CampaignId,
+  ContentTypeOption,
+  NicheOption,
+  Platform,
+  ToneOption,
+  ContentTypeId,
+} from "@/types";
 
 export const PLATFORMS: Platform[] = [
   {
@@ -36,49 +43,63 @@ export const CONTENT_TYPES: ContentTypeOption[] = [
   { id: "customer-proof", name: "Customer Proof", blurb: "Show why buyers trust it" },
 ];
 
-export const CAMPAIGN_PRESETS: Array<ContentTypeOption & { contentType: ContentTypeId }> = [
-  { id: "promotional", name: "New stock", blurb: "Announce a product", contentType: "promotional" },
+export const CAMPAIGN_PRESETS: Array<ContentTypeOption & { contentType: ContentTypeId; campaign: CampaignId }> = [
+  { id: "promotional", name: "New stock", blurb: "Announce a product", contentType: "promotional", campaign: "new-stock" },
   {
     id: "product-showcase",
     name: "Used device check",
     blurb: "Show condition clearly",
     contentType: "product-showcase",
+    campaign: "used-device-check",
   },
   {
     id: "promotional",
     name: "Price drop",
     blurb: "Share a price update",
     contentType: "promotional",
+    campaign: "price-drop",
   },
   {
     id: "promotional",
     name: "WhatsApp sales",
     blurb: "Start a buyer chat",
     contentType: "promotional",
+    campaign: "whatsapp-sales",
   },
   {
     id: "customer-proof",
     name: "Customer testimonial",
     blurb: "Add a verified experience",
     contentType: "customer-proof",
+    campaign: "customer-testimonial",
+  },
+  {
+    id: "promotional",
+    name: "Trade-in campaign",
+    blurb: "Invite upgrade conversations",
+    contentType: "promotional",
+    campaign: "trade-in",
   },
   {
     id: "educational",
     name: "Buyer education",
     blurb: "Explain what to check",
     contentType: "educational",
+    campaign: "buyer-education",
   },
   {
     id: "comparison",
     name: "Product comparison",
     blurb: "Help buyers decide",
     contentType: "comparison",
+    campaign: "product-comparison",
   },
   {
     id: "product-showcase",
     name: "Product showcase",
     blurb: "Make the product the hero",
     contentType: "product-showcase",
+    campaign: "product-showcase",
   },
 ];
 
