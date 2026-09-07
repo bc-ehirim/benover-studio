@@ -18,7 +18,13 @@ interface ResultCardProps {
   onDelete?: (id: string) => void;
 }
 
-export function ResultCard({ result, onGenerateVariation, onChange, onShorten, onDelete }: ResultCardProps) {
+export function ResultCard({
+  result,
+  onGenerateVariation,
+  onChange,
+  onShorten,
+  onDelete,
+}: ResultCardProps) {
   const [edited, setEdited] = useState(result);
   useEffect(() => setEdited(result), [result]);
   function update(next: GeneratedContent) {
@@ -174,12 +180,12 @@ export function ResultCard({ result, onGenerateVariation, onChange, onShorten, o
         </div>
       </motion.div>
 
-      <MediaGenerator result={result} />
+      <MediaGenerator result={edited} />
 
       <PromptCard
         title="Image Prompt"
         description="Paste into any image model to create the visual."
-        content={result.imagePrompt}
+        content={edited.imagePrompt}
         copyLabel="Copy Image Prompt"
         icon={<ImageIcon className="h-4 w-4 text-primary" />}
       />
@@ -187,7 +193,7 @@ export function ResultCard({ result, onGenerateVariation, onChange, onShorten, o
       <PromptCard
         title="AI Video Prompt"
         description="Hook, three scenes, overlays, camera moves and an ending CTA."
-        content={result.videoPrompt}
+        content={edited.videoPrompt}
         copyLabel="Copy Video Prompt"
         icon={<Video className="h-4 w-4 text-primary" />}
         compatibility={["Veo", "Kling", "Hailuo", "Sora", "Runway", "InVideo AI"]}

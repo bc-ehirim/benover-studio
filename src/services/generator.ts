@@ -52,6 +52,7 @@ function normalizeInput(input: GenerationInput): GenerationInput {
     price: limitInput(input.price, INPUT_LIMITS.productField),
     availability: limitInput(input.availability, INPUT_LIMITS.productField),
     location: limitInput(input.location, INPUT_LIMITS.productField),
+    currency: limitInput(input.currency, INPUT_LIMITS.productField),
     delivery: limitInput(input.delivery, INPUT_LIMITS.productField),
     warranty: limitInput(input.warranty, INPUT_LIMITS.productField),
     paymentOptions: limitInput(input.paymentOptions, INPUT_LIMITS.productField),
@@ -67,7 +68,7 @@ function productDetails(input: GenerationInput): string {
     input.condition && `condition: ${input.condition}`,
     input.batteryHealth && `battery health: ${input.batteryHealth}`,
     input.color && `colour: ${input.color}`,
-    input.price && `price: ${input.price}`,
+    input.price && `price: ${input.currency ? `${input.currency} ` : ""}${input.price}`,
     input.availability && `availability: ${input.availability}`,
   ].filter(Boolean);
   return details.length ? details.join(", ") : "specific product details supplied by the seller";
@@ -140,11 +141,7 @@ function formatCaption(
   niche: string,
   tone: ToneId,
 ): string {
-  const location = [
-    `📍 ${business}`,
-    input.location,
-    niche,
-  ].filter(Boolean).join(" · ");
+  const location = [`📍 ${business}`, input.location, niche].filter(Boolean).join(" · ");
   const bodySeparator = tone === "luxury" ? "\n\n" : "\n";
 
   if (input.platform === "whatsapp") {
@@ -255,13 +252,17 @@ function bodyFor(
     return [
       `${profile.hero} is ready for a new owner.`,
       `Product facts to review: ${productDetails(input)}.`,
-      input.availability ? `Availability: ${input.availability}.` : "Ask about current availability before publishing.",
+      input.availability
+        ? `Availability: ${input.availability}.`
+        : "Ask about current availability before publishing.",
     ];
   }
   if (input.campaign === "price-drop") {
     return [
       `${profile.hero} has a price update for buyers comparing their next upgrade.`,
-      input.price ? `Updated price: ${input.price}. Confirm it is current before publishing.` : "Add the updated price before publishing this post.",
+      input.price
+        ? `Updated price: ${input.price}. Confirm it is current before publishing.`
+        : "Add the updated price before publishing this post.",
       "Keep the previous price and offer terms only when they have been verified.",
     ];
   }
@@ -276,7 +277,9 @@ function bodyFor(
     return [
       `${profile.hero}, with the key details ready for a direct buyer conversation.`,
       `Send the model, condition and budget to ${business} for the next step.`,
-      input.availability ? `Availability: ${input.availability}.` : "Ask about current availability.",
+      input.availability
+        ? `Availability: ${input.availability}.`
+        : "Ask about current availability.",
     ];
   }
   if (input.campaign === "used-device-check") {
@@ -401,16 +404,16 @@ export function generateContent(input: GenerationInput): GeneratedContent {
   const cta = input.cta?.trim() || DEFAULT_CTA;
   const profileDetails = [
     input.location && `Location: ${input.location}.`,
+    input.currency && `Currency: ${input.currency}.`,
     input.delivery && `Delivery or pickup: ${input.delivery}.`,
     input.warranty && `Warranty or returns: ${input.warranty}.`,
     input.paymentOptions && `Payment options: ${input.paymentOptions}.`,
   ].filter(Boolean) as string[];
-  const profileCta = input.whatsapp?.trim()
-    ? `${cta} WhatsApp: ${input.whatsapp.trim()}.`
-    : cta;
+  const profileCta = input.whatsapp?.trim() ? `${cta} WhatsApp: ${input.whatsapp.trim()}.` : cta;
 
   const isPhoneSeed =
     profile.key === "iPhone" &&
+    !input.campaign &&
     (input.contentType === "educational" || input.contentType === "tips");
 
   const baseTitle = isPhoneSeed

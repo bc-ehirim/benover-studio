@@ -59,6 +59,7 @@ export interface GenerationInput {
   price?: string;
   availability?: string;
   location?: string;
+  currency?: string;
   delivery?: string;
   warranty?: string;
   paymentOptions?: string;

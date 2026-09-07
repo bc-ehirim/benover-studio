@@ -107,6 +107,7 @@ export function Studio() {
         price,
         availability,
         location: brandProfile.location,
+        currency: brandProfile.currency,
         delivery: brandProfile.delivery,
         warranty: brandProfile.warranty,
         paymentOptions: brandProfile.paymentOptions,
@@ -144,6 +145,7 @@ export function Studio() {
       price,
       availability,
       brandProfile.location,
+      brandProfile.currency,
       brandProfile.delivery,
       brandProfile.warranty,
       brandProfile.paymentOptions,
@@ -160,6 +162,7 @@ export function Studio() {
 
   function handlePickDay(day: CalendarDay) {
     setContentType(day.contentType);
+    setCampaign(undefined);
   }
 
   function generateVariation() {
@@ -273,7 +276,10 @@ export function Studio() {
                     option={c}
                     selected={c.id === contentType}
                     recommended={c.id === today.contentType}
-                    onSelect={setContentType}
+                    onSelect={(id) => {
+                      setContentType(id);
+                      setCampaign(undefined);
+                    }}
                   />
                 ))}
               </div>
@@ -557,10 +563,18 @@ export function Studio() {
                     </span>
                   </button>
                   <div className="mt-2 flex gap-3 text-xs text-muted-foreground">
-                    <button type="button" onClick={() => handleDuplicate(item)} className="hover:text-foreground">
+                    <button
+                      type="button"
+                      onClick={() => handleDuplicate(item)}
+                      className="hover:text-foreground"
+                    >
                       Duplicate
                     </button>
-                    <button type="button" onClick={() => handleDelete(item.id)} className="hover:text-destructive">
+                    <button
+                      type="button"
+                      onClick={() => handleDelete(item.id)}
+                      className="hover:text-destructive"
+                    >
                       Delete
                     </button>
                   </div>

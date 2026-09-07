@@ -57,6 +57,48 @@ describe("generateContent", () => {
     expect(facebook.caption).toContain("Facebook");
   });
 
+  it("uses configured profile facts in captions and media prompts", () => {
+    const result = generateContent({
+      ...baseInput,
+      business: "Benover Tech",
+      whatsapp: "+234 800 000 0000",
+      location: "Lagos",
+      currency: "NGN",
+      delivery: "Pickup available",
+      warranty: "7-day check warranty",
+      paymentOptions: "Transfer or card",
+      trustStatements: "Every supplied fact is reviewed before publishing.",
+      model: "iPhone 15",
+      price: "950000",
+      campaign: "new-stock",
+    });
+
+    expect(result.caption).toContain("Lagos");
+    expect(result.caption).toContain("Pickup available");
+    expect(result.caption).toContain("7-day check warranty");
+    expect(result.caption).toContain("WhatsApp: +234 800 000 0000");
+    expect(result.imagePrompt).toContain("NGN 950000");
+    expect(result.videoPrompt).toContain("+234 800 000 0000");
+  });
+
+  it("changes copy for distinct campaign presets", () => {
+    const newStock = generateContent({ ...baseInput, campaign: "new-stock" });
+    const tradeIn = generateContent({ ...baseInput, campaign: "trade-in" });
+    const priceDrop = generateContent({ ...baseInput, campaign: "price-drop", price: "NGN 100" });
+
+    expect(newStock.caption).toContain("ready for a new owner");
+    expect(tradeIn.caption).toContain("trade-in options");
+    expect(priceDrop.caption).toContain("Updated price");
+  });
+
+  it("creates distinct history keys for repeated generations and variations", () => {
+    const first = generateContent(baseInput);
+    const variation = generateContent({ ...baseInput, variation: 1 });
+
+    expect(first.id).not.toBe(variation.id);
+    expect(variation.title).toContain("Variation 1");
+  });
+
   it("changes vocabulary and formatting by tone", () => {
     const professional = generateContent({ ...baseInput, tone: "professional" });
     const luxury = generateContent({ ...baseInput, tone: "luxury" });

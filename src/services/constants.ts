@@ -43,8 +43,16 @@ export const CONTENT_TYPES: ContentTypeOption[] = [
   { id: "customer-proof", name: "Customer Proof", blurb: "Show why buyers trust it" },
 ];
 
-export const CAMPAIGN_PRESETS: Array<ContentTypeOption & { contentType: ContentTypeId; campaign: CampaignId }> = [
-  { id: "promotional", name: "New stock", blurb: "Announce a product", contentType: "promotional", campaign: "new-stock" },
+export const CAMPAIGN_PRESETS: Array<
+  ContentTypeOption & { contentType: ContentTypeId; campaign: CampaignId }
+> = [
+  {
+    id: "promotional",
+    name: "New stock",
+    blurb: "Announce a product",
+    contentType: "promotional",
+    campaign: "new-stock",
+  },
   {
     id: "product-showcase",
     name: "Used device check",

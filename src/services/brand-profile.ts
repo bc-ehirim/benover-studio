@@ -16,14 +16,35 @@ export const DEFAULT_BRAND_PROFILE: BrandProfile = {
   cta: "Message Benover Tech for current availability.",
 };
 
+const TONES = new Set<BrandProfile["tone"]>([
+  "professional",
+  "street-nigerian",
+  "luxury",
+  "funny",
+  "emotional",
+  "corporate",
+  "gen-z",
+]);
+
+function readProfile(value: unknown): BrandProfile {
+  if (!value || typeof value !== "object") return { ...DEFAULT_BRAND_PROFILE };
+  const stored = value as Partial<BrandProfile>;
+  const profile = { ...DEFAULT_BRAND_PROFILE };
+  for (const key of Object.keys(profile) as Array<keyof BrandProfile>) {
+    if (typeof stored[key] === "string") profile[key] = stored[key] as never;
+  }
+  if (!TONES.has(profile.tone)) profile.tone = DEFAULT_BRAND_PROFILE.tone;
+  return profile;
+}
+
 export function loadBrandProfile(): BrandProfile {
   if (typeof window === "undefined") return DEFAULT_BRAND_PROFILE;
   try {
     const stored = window.localStorage.getItem(BRAND_PROFILE_KEY);
-    if (!stored) return DEFAULT_BRAND_PROFILE;
-    return { ...DEFAULT_BRAND_PROFILE, ...JSON.parse(stored) };
+    if (!stored) return { ...DEFAULT_BRAND_PROFILE };
+    return readProfile(JSON.parse(stored));
   } catch {
-    return DEFAULT_BRAND_PROFILE;
+    return { ...DEFAULT_BRAND_PROFILE };
   }
 }
 
@@ -34,5 +55,5 @@ export function saveBrandProfile(profile: BrandProfile): void {
 
 export function resetBrandProfile(): BrandProfile {
   if (typeof window !== "undefined") window.localStorage.removeItem(BRAND_PROFILE_KEY);
-  return DEFAULT_BRAND_PROFILE;
+  return { ...DEFAULT_BRAND_PROFILE };
 }
