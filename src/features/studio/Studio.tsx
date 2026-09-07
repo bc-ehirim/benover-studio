@@ -7,9 +7,11 @@ import { PlatformCard } from "@/components/PlatformCard";
 import { ResultCard } from "@/components/ResultCard";
 import { ResultSkeleton } from "@/components/ResultSkeleton";
 import { ToneSelector } from "@/components/ToneSelector";
+import { BrandProfileForm } from "@/components/BrandProfileForm";
 import { CalendarStrip } from "./CalendarStrip";
 import {
   CONTENT_TYPES,
+  CAMPAIGN_PRESETS,
   INPUT_LIMITS,
   NICHES,
   PLATFORMS,
@@ -18,6 +20,7 @@ import {
   type CalendarDay,
 } from "@/services/constants";
 import { generateContent } from "@/services/generator";
+import { loadBrandProfile, saveBrandProfile } from "@/services/brand-profile";
 import { fadeUp, stagger, viewportOnce } from "@/utils/motion";
 import type {
   ContentTypeId,
@@ -25,6 +28,7 @@ import type {
   GenerationInput,
   PlatformId,
   ToneId,
+  BrandProfile,
 } from "@/types";
 
 const labelClass = "text-xs font-semibold uppercase tracking-wider text-muted-foreground";
@@ -33,14 +37,15 @@ const inputClass =
 
 export function Studio() {
   const [todayIndex, setTodayIndex] = useState(1);
+  const [brandProfile, setBrandProfile] = useState<BrandProfile>(loadBrandProfile);
   const [platform, setPlatform] = useState<PlatformId>("instagram");
   const [contentType, setContentType] = useState<ContentTypeId>("educational");
   const [niche, setNiche] = useState("iPhone");
   const [customNiche, setCustomNiche] = useState("");
-  const [tone, setTone] = useState<ToneId>("professional");
-  const [business, setBusiness] = useState("");
-  const [audience, setAudience] = useState("");
-  const [cta, setCta] = useState("");
+  const [tone, setTone] = useState<ToneId>(brandProfile.tone);
+  const [business, setBusiness] = useState(brandProfile.business);
+  const [audience, setAudience] = useState(brandProfile.audience);
+  const [cta, setCta] = useState(brandProfile.cta);
   const [model, setModel] = useState("");
   const [storage, setStorage] = useState("");
   const [ram, setRam] = useState("");
@@ -49,6 +54,7 @@ export function Studio() {
   const [color, setColor] = useState("");
   const [price, setPrice] = useState("");
   const [availability, setAvailability] = useState("");
+  const [advancedOpen, setAdvancedOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState<GeneratedContent | null>(null);
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -61,6 +67,15 @@ export function Studio() {
   }, []);
 
   const today = useMemo(() => dayPlan(todayIndex), [todayIndex]);
+
+  function handleBrandProfileChange(profile: BrandProfile) {
+    setBrandProfile(profile);
+    setBusiness(profile.business);
+    setAudience(profile.audience);
+    setTone(profile.tone);
+    setCta(profile.cta);
+    saveBrandProfile(profile);
+  }
 
   const run = useCallback(
     (overrides?: Partial<GenerationInput>) => {
@@ -81,6 +96,11 @@ export function Studio() {
         color,
         price,
         availability,
+        location: brandProfile.location,
+        delivery: brandProfile.delivery,
+        warranty: brandProfile.warranty,
+        paymentOptions: brandProfile.paymentOptions,
+        trustStatements: brandProfile.trustStatements,
         ...overrides,
       };
       setLoading(true);
@@ -146,6 +166,10 @@ export function Studio() {
           </motion.div>
 
           <motion.div variants={fadeUp}>
+            <BrandProfileForm profile={brandProfile} onChange={handleBrandProfileChange} />
+          </motion.div>
+
+          <motion.div variants={fadeUp}>
             <CalendarStrip
               todayIndex={todayIndex}
               activeType={contentType}
@@ -193,6 +217,26 @@ export function Studio() {
                     recommended={c.id === today.contentType}
                     onSelect={setContentType}
                   />
+                ))}
+              </div>
+            </div>
+
+            <div>
+              <p className={labelClass}>Start with a campaign</p>
+              <div className="mt-3 grid grid-cols-2 gap-2 sm:grid-cols-4">
+                {CAMPAIGN_PRESETS.map((preset, index) => (
+                  <button
+                    key={`${preset.name}-${index}`}
+                    type="button"
+                    onClick={() => {
+                      setContentType(preset.contentType);
+                      if (preset.name === "WhatsApp sales") setPlatform("whatsapp");
+                    }}
+                    className="rounded-xl border border-border bg-surface/50 p-3 text-left transition-colors hover:border-primary/50 hover:bg-surface focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                  >
+                    <span className="block text-xs font-semibold">{preset.name}</span>
+                    <span className="mt-1 block text-[11px] leading-snug text-muted-foreground">{preset.blurb}</span>
+                  </button>
                 ))}
               </div>
             </div>
@@ -249,14 +293,37 @@ export function Studio() {
               </div>
             </div>
 
-            <div>
-              <p className={labelClass}>Tone</p>
-              <div className="mt-3">
-                <ToneSelector value={tone} onChange={setTone} />
-              </div>
+            <div className="grid gap-3 sm:grid-cols-3">
+              {[
+                ["model", "Model", model, setModel, "e.g. Galaxy S24"],
+                ["condition", "Condition", condition, setCondition, "New, used or UK-used"],
+                ["price", "Price", price, setPrice, "e.g. Ask for current price"],
+              ].map(([id, label, value, setter, placeholder]) => (
+                <div key={id as string}>
+                  <label className={labelClass} htmlFor={id as string}>{label as string}</label>
+                  <input
+                    id={id as string}
+                    value={value as string}
+                    onChange={(event) => (setter as (value: string) => void)(event.target.value)}
+                    maxLength={INPUT_LIMITS.productField}
+                    placeholder={placeholder as string}
+                    className={`${inputClass} mt-2.5`}
+                  />
+                </div>
+              ))}
             </div>
 
-            <div className="grid gap-3 sm:grid-cols-3">
+            <details open={advancedOpen} onToggle={(event) => setAdvancedOpen(event.currentTarget.open)}>
+              <summary className="cursor-pointer text-sm font-semibold text-primary">Advanced details</summary>
+              <div className="mt-4 space-y-5">
+                <div>
+                  <p className={labelClass}>Tone</p>
+                  <div className="mt-3">
+                    <ToneSelector value={tone} onChange={setTone} />
+                  </div>
+                </div>
+
+                <div className="grid gap-3 sm:grid-cols-3">
               <div>
                 <label className={labelClass} htmlFor="business">
                   Business
@@ -296,19 +363,20 @@ export function Studio() {
                   className={`${inputClass} mt-2.5`}
                 />
               </div>
-            </div>
+                </div>
+              </div>
+            </details>
 
-            <div>
+            <details className="rounded-xl border border-border/70 p-4">
+              <summary className="cursor-pointer text-sm font-semibold">Additional product facts</summary>
+              <div className="mt-4">
               <p className={labelClass}>Product details (optional)</p>
               <div className="mt-3 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
                 {[
-                  ["model", "Model", model, setModel, "e.g. Galaxy S24"],
                   ["storage", "Storage", storage, setStorage, "e.g. 256GB"],
                   ["ram", "RAM", ram, setRam, "e.g. 16GB"],
-                  ["condition", "Condition", condition, setCondition, "New or used"],
                   ["batteryHealth", "Battery health", batteryHealth, setBatteryHealth, "e.g. 92%"],
                   ["color", "Colour", color, setColor, "e.g. Graphite"],
-                  ["price", "Price", price, setPrice, "e.g. Ask for current price"],
                   ["availability", "Availability", availability, setAvailability, "In stock or pre-order"],
                 ].map(([id, label, value, setter, placeholder]) => (
                   <div key={id as string}>
@@ -329,7 +397,8 @@ export function Studio() {
               <p className="mt-2 text-[11px] text-muted-foreground">
                 Add only facts you are ready to publish. Generated copy remains a draft for review.
               </p>
-            </div>
+              </div>
+            </details>
 
             <AnimatedButton
               size="lg"

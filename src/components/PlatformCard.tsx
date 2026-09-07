@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { Check, Facebook, Instagram, Music2 } from "lucide-react";
+import { Check, Facebook, Instagram, MessageCircle, Music2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { Platform, PlatformId } from "@/types";
 
@@ -7,6 +7,7 @@ const icons: Record<PlatformId, React.ComponentType<{ className?: string }>> = {
   facebook: Facebook,
   instagram: Instagram,
   tiktok: Music2,
+  whatsapp: MessageCircle,
 };
 
 interface PlatformCardProps {
