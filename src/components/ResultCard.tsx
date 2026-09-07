@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { Hash, Image as ImageIcon, Info, RefreshCw, Video } from "lucide-react";
+import { Hash, Image as ImageIcon, Info, Minimize2, RefreshCw, Trash2, Video } from "lucide-react";
 import { CopyButton } from "./CopyButton";
 import { DownloadButton } from "./DownloadButton";
 import { MediaGenerator } from "./MediaGenerator";
@@ -13,11 +13,18 @@ import type { GeneratedContent } from "@/types";
 interface ResultCardProps {
   result: GeneratedContent;
   onGenerateVariation?: () => void;
+  onChange?: (result: GeneratedContent) => void;
+  onShorten?: (result: GeneratedContent) => void;
+  onDelete?: (id: string) => void;
 }
 
-export function ResultCard({ result, onGenerateVariation }: ResultCardProps) {
+export function ResultCard({ result, onGenerateVariation, onChange, onShorten, onDelete }: ResultCardProps) {
   const [edited, setEdited] = useState(result);
   useEffect(() => setEdited(result), [result]);
+  function update(next: GeneratedContent) {
+    setEdited(next);
+    onChange?.(next);
+  }
   const platform = PLATFORMS.find((p) => p.id === result.platform);
   const charCount = edited.caption.length;
   const max = platform?.maxChars ?? 2200;
@@ -51,7 +58,7 @@ export function ResultCard({ result, onGenerateVariation }: ResultCardProps) {
           </div>
           <input
             value={edited.title}
-            onChange={(event) => setEdited({ ...edited, title: event.target.value })}
+            onChange={(event) => update({ ...edited, title: event.target.value })}
             aria-label="Editable post title"
             className="mt-3 w-full bg-transparent text-xl font-semibold leading-snug outline-none sm:text-2xl"
           />
@@ -73,7 +80,7 @@ export function ResultCard({ result, onGenerateVariation }: ResultCardProps) {
           </div>
           <textarea
             value={edited.caption}
-            onChange={(event) => setEdited({ ...edited, caption: event.target.value })}
+            onChange={(event) => update({ ...edited, caption: event.target.value })}
             aria-label="Editable caption"
             rows={10}
             className="mt-3 w-full resize-y rounded-xl border border-border bg-background/40 p-3 text-sm leading-relaxed text-foreground/90 outline-none focus:border-primary/60 focus:ring-2 focus:ring-primary/20"
@@ -100,7 +107,7 @@ export function ResultCard({ result, onGenerateVariation }: ResultCardProps) {
             <textarea
               value={edited.hashtags.join(" ")}
               onChange={(event) =>
-                setEdited({
+                update({
                   ...edited,
                   hashtags: event.target.value.split(/\s+/).filter(Boolean),
                 })
@@ -115,7 +122,7 @@ export function ResultCard({ result, onGenerateVariation }: ResultCardProps) {
             <p className="text-xs uppercase tracking-wider text-primary/80">Call to action</p>
             <input
               value={edited.cta}
-              onChange={(event) => setEdited({ ...edited, cta: event.target.value })}
+              onChange={(event) => update({ ...edited, cta: event.target.value })}
               aria-label="Editable call to action"
               className="mt-1 w-full bg-transparent text-sm font-medium outline-none"
             />
@@ -129,10 +136,21 @@ export function ResultCard({ result, onGenerateVariation }: ResultCardProps) {
             value={captionWithHashtags}
             variant="primary"
           />
-          <CopyButton label="Copy Hashtags" value={result.hashtags.join(" ")} />
+          <CopyButton label="Copy Hashtags" value={edited.hashtags.join(" ")} />
+          <CopyButton label="Copy Complete Pack" value={fileText} />
           <CopyButton label="Copy Image Prompt" value={result.imagePrompt} />
           <CopyButton label="Copy Video Prompt" value={result.videoPrompt} />
           <DownloadButton filename="benover-content.txt" contents={fileText} />
+          {onShorten && (
+            <button
+              type="button"
+              onClick={() => onShorten(edited)}
+              className="inline-flex h-10 items-center justify-center gap-2 rounded-xl border border-border bg-surface/50 px-4 text-sm font-medium transition-colors hover:border-primary/50 hover:bg-surface focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+            >
+              <Minimize2 className="h-4 w-4" />
+              Shorten caption
+            </button>
+          )}
           {onGenerateVariation && (
             <button
               type="button"
@@ -141,6 +159,16 @@ export function ResultCard({ result, onGenerateVariation }: ResultCardProps) {
             >
               <RefreshCw className="h-4 w-4" />
               Generate variation
+            </button>
+          )}
+          {onDelete && (
+            <button
+              type="button"
+              onClick={() => onDelete(edited.id)}
+              className="inline-flex h-10 items-center justify-center gap-2 rounded-xl border border-destructive/30 px-4 text-sm font-medium text-destructive transition-colors hover:bg-destructive/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+            >
+              <Trash2 className="h-4 w-4" />
+              Delete draft
             </button>
           )}
         </div>

@@ -24,6 +24,7 @@ import { loadBrandProfile, saveBrandProfile } from "@/services/brand-profile";
 import {
   clearContentHistory,
   loadContentHistory,
+  removeContentHistory,
   saveContentHistory,
 } from "@/services/content-history";
 import { fadeUp, stagger, viewportOnce } from "@/utils/motion";
@@ -165,6 +166,33 @@ export function Studio() {
     const nextVariation = variation + 1;
     setVariation(nextVariation);
     run({ variation: nextVariation });
+  }
+
+  function handleResultChange(next: GeneratedContent) {
+    setResult(next);
+    setHistory(saveContentHistory(next));
+  }
+
+  function handleShorten(next: GeneratedContent) {
+    const lines = next.caption.split("\n").filter(Boolean);
+    const caption = [...lines.slice(0, 5), "", next.cta].join("\n");
+    handleResultChange({ ...next, caption });
+  }
+
+  function handleDelete(id: string) {
+    setHistory(removeContentHistory(id));
+    if (result?.id === id) setResult(null);
+  }
+
+  function handleDuplicate(item: GeneratedContent) {
+    const duplicate = {
+      ...item,
+      id: `${item.id}-copy-${Date.now()}`,
+      title: `${item.title} · Copy`,
+      createdAt: new Date().toISOString(),
+    };
+    setResult(duplicate);
+    setHistory(saveContentHistory(duplicate));
   }
 
   return (
@@ -485,6 +513,9 @@ export function Studio() {
               key={result.id + result.createdAt}
               result={result}
               onGenerateVariation={generateVariation}
+              onChange={handleResultChange}
+              onShorten={handleShorten}
+              onDelete={handleDelete}
             />
           )}
         </AnimatePresence>
@@ -511,17 +542,29 @@ export function Studio() {
             </div>
             <div className="mt-3 grid gap-2 sm:grid-cols-2">
               {history.map((item) => (
-                <button
+                <div
                   key={`${item.id}-${item.createdAt}`}
-                  type="button"
-                  onClick={() => setResult(item)}
-                  className="rounded-xl border border-border bg-background/40 p-3 text-left hover:border-primary/50"
+                  className="rounded-xl border border-border bg-background/40 p-3"
                 >
-                  <span className="block truncate text-sm font-medium">{item.title}</span>
-                  <span className="mt-1 block text-xs text-muted-foreground">
-                    {item.platform} · {item.niche}
-                  </span>
-                </button>
+                  <button
+                    type="button"
+                    onClick={() => setResult(item)}
+                    className="w-full text-left hover:text-primary"
+                  >
+                    <span className="block truncate text-sm font-medium">{item.title}</span>
+                    <span className="mt-1 block text-xs text-muted-foreground">
+                      {item.platform} · {item.niche}
+                    </span>
+                  </button>
+                  <div className="mt-2 flex gap-3 text-xs text-muted-foreground">
+                    <button type="button" onClick={() => handleDuplicate(item)} className="hover:text-foreground">
+                      Duplicate
+                    </button>
+                    <button type="button" onClick={() => handleDelete(item.id)} className="hover:text-destructive">
+                      Delete
+                    </button>
+                  </div>
+                </div>
               ))}
             </div>
           </div>
